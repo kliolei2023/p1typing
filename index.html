@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>小一英文打字練習 (Firebase 最終版)</title>
+    <title>小一英文打字練習 (李老師)</title>
     <style>
         :root {
             --bg-color: #f0f8ff; --highlight-color: #ffd700; --correct-color: #98fb98; --error-color: #ffb6c1;
@@ -123,10 +123,11 @@
     <button class="admin-trigger" onclick="openAdminLogin()" title="老師專用設定">⚙️</button>
 
     <div id="login-screen" class="screen-container">
-        <h1>👋 歡迎來到打字練習</h1>
+        <h1>👋 歡迎來到化地瑪小一同學的打字練習</h1>
+        <h3>作者：李老師</h3>
         <div style="margin-top: 20px; width: 100%;">
             <div class="input-group" style="margin: 0 auto 20px auto;">
-                <label class="input-label">你的名字 (Name)：</label>
+                <label class="input-label">名字 (Name)：</label>
                 <input type="text" id="input-name" class="input-field" placeholder="請輸入名字" autocomplete="off">
             </div>
             <div class="input-group" style="margin: 0 auto 20px auto;">
@@ -149,7 +150,7 @@
     <div id="setup-screen" class="screen-container">
         <h1>🎈 設定練習模式 🎈</h1>
         <div class="section-box">
-            <div class="section-title">第一步：選擇字母樣子</div>
+            <div class="section-title">第一步：選擇大小寫</div>
             <div class="option-group">
                 <button class="btn-opt active" id="opt-mixed" onclick="selectCaseOption('mixed')">大小皆可</button>
                 <button class="btn-opt" id="opt-upper" onclick="selectCaseOption('upper')">僅大寫</button>
@@ -175,7 +176,7 @@
             </div>
         </div>
         <button class="btn-start" onclick="startGame()">🚀 開始遊戲</button>
-        <button class="btn-leaderboard" onclick="showLeaderboard()">🏆 查看龍虎榜</button>
+        <button class="btn-leaderboard" onclick="showLeaderboard()">🏆 查看排名榜</button>
     </div>
 
     <div id="game-screen">
@@ -211,7 +212,7 @@
 
     <div id="leaderboard-modal" class="modal-overlay">
         <div class="modal-content" style="width: 500px;">
-            <h2 style="color: #4682b4;">🏆 龍虎榜 🏆</h2>
+            <h2 style="color: #4682b4;">🏆 排名榜 🏆</h2>
             <div style="max-height: 400px; overflow-y: auto;">
                 <table class="lb-table"><thead><tr><th>排名</th><th>姓名</th><th>班別</th><th>級別</th><th>分數</th></tr></thead><tbody id="lb-body"></tbody></table>
             </div>
@@ -223,8 +224,8 @@
         <div class="modal-content" style="width: 300px;">
             <h3>🔑 老師專用區</h3>
             <div class="admin-login-box">
-                <input type="email" id="admin-email" class="input-field" placeholder="管理員信箱 (Email)" style="font-size: 16px; margin-bottom: 10px;">
-                <input type="password" id="admin-pwd" class="input-field" placeholder="輸入密碼 (Firebase)" style="font-size: 16px;">
+                <input type="email" id="admin-email" class="input-field" placeholder="Email" style="font-size: 16px; margin-bottom: 10px;">
+                <input type="password" id="admin-pwd" class="input-field" placeholder="密碼 (Firebase)" style="font-size: 16px;">
                 <button class="modal-btn btn-primary" style="width:100%" onclick="verifyAdmin()">登入</button>
                 <button class="modal-btn btn-neutral" style="width:100%" onclick="closeModal('admin-login-modal')">取消</button>
             </div>
