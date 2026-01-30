@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>小一英文打字練習 (Firebase 雲端版)</title>
+    <title>小一英文打字練習 (Firebase 最終版)</title>
     <style>
         :root {
             --bg-color: #f0f8ff; --highlight-color: #ffd700; --correct-color: #98fb98; --error-color: #ffb6c1;
@@ -19,7 +19,7 @@
         .screen-container { display: flex; flex-direction: column; align-items: center; background: white; padding: 2vh 3vw; border-radius: 25px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); width: 90%; max-width: 600px; text-align: center; overflow-y: auto; max-height: 95vh; border: 5px solid #e0f0ff; }
         .input-group { margin: 20px 0; width: 80%; }
         .input-label { display: block; font-size: 20px; color: #555; margin-bottom: 5px; font-weight: bold; }
-        .input-field { width: 100%; padding: 12px; font-size: 20px; border: 3px solid #ccc; border-radius: 15px; text-align: center; outline: none; font-family: inherit; }
+        .input-field { width: 100%; padding: 12px; font-size: 20px; border: 3px solid #ccc; border-radius: 15px; text-align: center; outline: none; font-family: inherit; box-sizing: border-box; }
         .btn-next { margin-top: 20px; padding: 12px 40px; background: #4682b4; color: white; border: none; border-radius: 50px; font-size: 22px; cursor: pointer; font-weight: bold; box-shadow: 0 5px 0 #2e5a7e; }
         
         #setup-screen, #exam-entry-screen { display: none; }
@@ -76,6 +76,17 @@
         .modal-btn { margin: 5px; padding: 10px 20px; border-radius: 12px; border: none; font-size: 15px; font-weight: 600; cursor: pointer; color: white; transition: all 0.2s ease; box-shadow: 0 4px 6px rgba(0,0,0,0.1); display: inline-flex; align-items: center; justify-content: center; gap: 5px; }
         .modal-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 12px rgba(0,0,0,0.15); }
         .modal-btn:active { transform: translateY(0); }
+        
+        /* 1. 修改：時間到後的確定鍵 (紅色、大顆) */
+        #result-modal .modal-btn {
+            background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
+            font-size: 32px; /* 字體加大 */
+            padding: 20px 60px; /* 按鈕加大 */
+            box-shadow: 0 10px 25px rgba(255, 65, 108, 0.5); /* 強烈陰影 */
+            border-radius: 50px;
+        }
+        #result-modal .modal-btn:hover { transform: scale(1.1); }
+
         .btn-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
         .btn-success { background: linear-gradient(135deg, #2af598 0%, #009efd 100%); }
         .btn-danger  { background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%); color: #d63031; }
@@ -212,7 +223,8 @@
         <div class="modal-content" style="width: 300px;">
             <h3>🔑 老師專用區</h3>
             <div class="admin-login-box">
-                <input type="password" id="admin-pwd" class="input-field" placeholder="輸入密碼 (123456)">
+                <input type="email" id="admin-email" class="input-field" placeholder="管理員信箱 (Email)" style="font-size: 16px; margin-bottom: 10px;">
+                <input type="password" id="admin-pwd" class="input-field" placeholder="輸入密碼 (Firebase)" style="font-size: 16px;">
                 <button class="modal-btn btn-primary" style="width:100%" onclick="verifyAdmin()">登入</button>
                 <button class="modal-btn btn-neutral" style="width:100%" onclick="closeModal('admin-login-modal')">取消</button>
             </div>
@@ -270,7 +282,11 @@
                     <select id="filter-class" class="filter-select" onchange="renderAdminPanel()"><option value="">所有班別</option></select>
                     <select id="filter-level" class="filter-select" onchange="renderAdminPanel()">
                         <option value="">所有級別</option>
-                        <option value="1">Lv.1</option><option value="2">Lv.2</option><option value="3">Lv.3</option><option value="4">Lv.4</option>
+                        <option value="1">Lv.1</option>
+                        <option value="2">Lv.2</option>
+                        <option value="3">Lv.3</option>
+                        <option value="4">Lv.4</option>
+                        <option value="Exam">Exam</option>
                     </select>
                     <input type="date" id="filter-date" class="filter-select" onchange="renderAdminPanel()">
                     <button class="modal-btn btn-neutral" style="font-size:12px; padding: 5px 10px;" onclick="resetFilters()">重置</button>
@@ -291,12 +307,17 @@
                 </div>
             </div>
 
-            <button class="modal-btn btn-neutral" onclick="closeModal('admin-panel-modal')" style="width: 100%; margin-top: 15px;">關閉後台</button>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px;">
+                <button class="modal-btn btn-danger" onclick="logoutAdmin()">🚪 登出</button>
+                <button class="modal-btn btn-neutral" onclick="closeModal('admin-panel-modal')">關閉後台</button>
+            </div>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics.js";
+        import { getAuth, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getFirestore, collection, addDoc, getDocs, doc, setDoc, getDoc, deleteDoc, query, orderBy, limit, writeBatch, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = {
@@ -310,132 +331,119 @@
         };
 
         const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // --- 全域變數 ---
-        let allRecords = []; // Cache for admin panel
+        // Global
+        let allRecords = [];
         let examConfig = { isActive: false, content: "", time: 90, noHints: false, noKeyboard: false };
 
-        // --- Firestore 函式 ---
-        
-        // 1. 儲存成績
-        window.saveScoreToFirebase = async function(record) {
+        // --- Auth Functions ---
+        window.verifyAdmin = async function() {
+            const email = document.getElementById('admin-email').value;
+            const pwd = document.getElementById('admin-pwd').value;
+            if(!email || !pwd) return alert("請輸入 Email 和 密碼");
+            
             try {
-                await addDoc(collection(db, "scores"), {
-                    ...record,
-                    timestamp: serverTimestamp()
-                });
-                console.log("Score saved!");
+                await signInWithEmailAndPassword(auth, email, pwd);
+                document.getElementById('admin-login-modal').style.display = 'none';
+                document.getElementById('admin-pwd').value = '';
+                
+                await window.refreshAdminData();
+                window.loadAdminSettingsUI();
+                window.populateClassFilter(); 
+                window.renderAdminPanel(); 
+                
+                document.getElementById('admin-panel-modal').style.display = 'flex';
             } catch (e) {
-                console.error("Error adding document: ", e);
-                alert("連線錯誤，成績可能未儲存");
+                alert("登入失敗: " + e.message);
             }
+        }
+
+        window.logoutAdmin = async function() {
+            await signOut(auth);
+            document.getElementById('admin-panel-modal').style.display = 'none';
+        }
+
+        // --- Firestore Functions ---
+        window.saveScoreToFirebase = async function(record) {
+            try { await addDoc(collection(db, "scores"), { ...record, timestamp: serverTimestamp() }); } 
+            catch (e) { console.error(e); }
         };
 
-        // 2. 讀取排行榜 (前50名)
         window.fetchLeaderboard = async function() {
             try {
                 const q = query(collection(db, "scores"), orderBy("score", "desc"), limit(50));
                 const querySnapshot = await getDocs(q);
                 let records = [];
-                querySnapshot.forEach((doc) => {
-                    records.push(doc.data());
-                });
+                querySnapshot.forEach((doc) => records.push(doc.data()));
                 return records;
-            } catch (e) {
-                console.error("Error fetching leaderboard: ", e);
-                return [];
-            }
+            } catch (e) { console.error(e); return []; }
         };
 
-        // 3. 讀取所有成績 (給後台用)
         window.fetchAllScores = async function() {
             try {
                 const q = query(collection(db, "scores"), orderBy("timestamp", "desc"));
                 const querySnapshot = await getDocs(q);
                 allRecords = [];
-                querySnapshot.forEach((doc) => {
-                    allRecords.push({ id: doc.id, ...doc.data() });
-                });
+                querySnapshot.forEach((doc) => allRecords.push({ id: doc.id, ...doc.data() }));
                 return allRecords;
-            } catch (e) {
-                console.error("Error fetching all scores: ", e);
-                return [];
-            }
+            } catch (e) { console.error(e); return []; }
         };
 
-        // 4. 刪除單筆/多筆成績
         window.deleteScores = async function(ids) {
             try {
                 const batch = writeBatch(db);
-                ids.forEach(id => {
-                    const ref = doc(db, "scores", id);
+                ids.forEach(id => { 
+                    const ref = doc(db, "scores", String(id)); 
                     batch.delete(ref);
                 });
                 await batch.commit();
                 return true;
-            } catch (e) {
-                console.error("Error deleting documents: ", e);
-                return false;
-            }
+            } catch (e) { console.error(e); return false; }
         };
 
-        // 5. 清空所有成績 (Batch delete, 500 at a time)
         window.clearAllScores = async function() {
             try {
                 const q = query(collection(db, "scores"), limit(500));
                 const snapshot = await getDocs(q);
                 const batch = writeBatch(db);
-                snapshot.forEach((doc) => {
-                    batch.delete(doc.ref);
-                });
-                await batch.commit();
-                return true;
-            } catch (e) {
-                console.error("Error clearing collection: ", e);
-                return false;
-            }
+                snapshot.forEach((doc) => batch.delete(doc.ref));
+                await batch.commit(); return true;
+            } catch (e) { console.error(e); return false; }
         };
 
-        // 6. 考試設定 (讀取)
         window.fetchExamConfig = async function() {
             try {
                 const docRef = doc(db, "settings", "examConfig");
                 const docSnap = await getDoc(docRef);
-                if (docSnap.exists()) {
-                    examConfig = docSnap.data();
-                } else {
-                    // 預設值
-                    examConfig = { isActive: false, content: "", time: 90, noHints: false, noKeyboard: false };
-                }
+                if (docSnap.exists()) examConfig = docSnap.data();
+                else examConfig = { isActive: false, content: "", time: 90, noHints: false, noKeyboard: false };
                 return examConfig;
-            } catch (e) {
-                console.error("Error fetching exam config: ", e);
-                return { isActive: false };
-            }
+            } catch (e) { console.error(e); return { isActive: false }; }
         };
 
-        // 7. 考試設定 (儲存)
         window.saveExamConfigToFirebase = async function(config) {
             try {
                 await setDoc(doc(db, "settings", "examConfig"), config);
-                examConfig = config; // Update local
-                alert("考試設定已儲存！");
-            } catch (e) {
-                console.error("Error saving config: ", e);
-                alert("設定儲存失敗");
-            }
+                examConfig = config; alert("考試設定已儲存！");
+            } catch (e) { console.error(e); alert("儲存失敗"); }
         };
 
-        // 初始載入考試設定
-        fetchExamConfig().then(cfg => {
-            console.log("Exam config loaded:", cfg);
-        });
+        fetchExamConfig().then(cfg => console.log("Config loaded"));
 
-        // 將變數暴露給 Global 以便 HTML onclick 使用
         window.getExamConfig = () => examConfig;
         window.getAllRecords = () => allRecords;
-
+        window.refreshAdminData = fetchAllScores;
+        window.loadAdminSettingsUI = () => {
+            const c = examConfig;
+            document.getElementById('admin-exam-active').checked = c.isActive||false;
+            document.getElementById('admin-exam-content').value = c.content||"";
+            document.getElementById('admin-exam-time').value = c.time||"90";
+            document.getElementById('admin-exam-nohints').checked = c.noHints||false;
+            document.getElementById('admin-exam-nokeyboard').checked = c.noKeyboard||false;
+        };
     </script>
 
     <script>
@@ -459,7 +467,6 @@
         let examWordIndex = 0;
         let examCharIndex = 0;
 
-        // --- 進入點 ---
         async function enterSetup() {
             const name = document.getElementById('input-name').value.trim();
             const classVal = document.getElementById('input-class').value.trim();
@@ -467,8 +474,6 @@
             currentUser.name = name; currentUser.classVal = classVal;
             
             document.getElementById('login-screen').style.display = 'none';
-
-            // 等待 Firebase 載入設定
             const config = window.getExamConfig ? window.getExamConfig() : { isActive: false };
 
             if (config.isActive) {
@@ -480,20 +485,16 @@
             }
         }
 
-        // --- 考試模式 ---
         function startExam() {
             const config = window.getExamConfig();
             selectedTime = parseInt(config.time);
-            
             let content = config.content || "Apple Banana Cat";
             examContentArray = content.trim().split(/\s+/); 
             if(examContentArray.length === 0) examContentArray = ['Apple'];
-            
             examWordIndex = 0; examCharIndex = 0;
             
             const kb = document.getElementById('keyboard-ui');
             const hands = document.getElementById('hands-ui');
-            
             if (config.noKeyboard) { kb.classList.add('hidden'); hands.classList.add('hidden'); } 
             else { kb.classList.remove('hidden'); hands.classList.remove('hidden'); }
 
@@ -501,7 +502,6 @@
             document.getElementById('result-modal').style.display = 'none';
             document.getElementById('exam-entry-screen').style.display = 'none';
             document.getElementById('game-screen').style.display = 'flex';
-            
             document.getElementById('level-indicator').innerText = "考試模式";
             document.getElementById('player-display').innerText = `${currentUser.classVal} - ${currentUser.name}`;
             document.getElementById('timer').innerText = timeLeft;
@@ -509,7 +509,6 @@
 
             if (audioCtx.state === 'suspended') audioCtx.resume();
             checkCapsLockState(new KeyboardEvent('keydown')); 
-            
             nextChar(); 
 
             if(timerInterval) clearInterval(timerInterval);
@@ -519,7 +518,6 @@
             }, 1000);
         }
 
-        // --- 一般模式 ---
         function startGame() {
             isExamMode = false;
             score = 0; timeLeft = selectedTime; isGameRunning = true;
@@ -528,17 +526,14 @@
             document.getElementById('result-modal').style.display = 'none';
             document.getElementById('setup-screen').style.display = 'none';
             document.getElementById('game-screen').style.display = 'flex';
-            
             const titles = {1:"Level 1",2:"Level 2",3:"Level 3",4:"Level 4"};
             document.getElementById('level-indicator').innerText = titles[selectedLevel];
             document.getElementById('player-display').innerText = `${currentUser.classVal} - ${currentUser.name}`;
             document.getElementById('timer').innerText = timeLeft;
             updateScore();
-
             if (audioCtx.state === 'suspended') audioCtx.resume();
             checkCapsLockState(new KeyboardEvent('keydown')); 
             nextChar();
-
             if(timerInterval) clearInterval(timerInterval);
             timerInterval = setInterval(() => {
                 timeLeft--; document.getElementById('timer').innerText = timeLeft;
@@ -548,22 +543,10 @@
 
         function endGame() {
             isGameRunning = false; clearInterval(timerInterval);
-            
             const now = new Date();
             const dateStr = now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0');
-            
-            const record = {
-                name: currentUser.name,
-                class: currentUser.classVal,
-                level: isExamMode ? "Exam" : selectedLevel,
-                score: score,
-                date: now.toLocaleString(),
-                filterDate: dateStr
-            };
-
-            // Call Firebase
+            const record = { name: currentUser.name, class: currentUser.classVal, level: isExamMode ? "Exam" : selectedLevel, score: score, date: now.toLocaleString(), filterDate: dateStr };
             if(window.saveScoreToFirebase) window.saveScoreToFirebase(record);
-
             document.getElementById('final-score').innerText = score;
             document.getElementById('result-modal').style.display = 'flex';
         }
@@ -578,7 +561,6 @@
 
         function nextChar() {
             if (!isGameRunning) return;
-            
             if (isExamMode) {
                 if (examWordIndex >= examContentArray.length) examWordIndex = 0;
                 let currentWord = examContentArray[examWordIndex];
@@ -596,7 +578,6 @@
                 else if (selectedCaseMode === 'upper') char = char.toUpperCase();
                 else if (selectedCaseMode === 'lower') char = char.toLowerCase();
                 currentTarget = char;
-                
                 const display = document.getElementById('target-char');
                 display.innerText = (selectedCaseMode === 'mixed') ? char.toUpperCase() : char;
             }
@@ -636,10 +617,7 @@
             const tracer = document.getElementById('tracer');
             tracer.classList.remove('animating');
 
-            let tid = 'key-' + lowerChar; 
-            if(lowerChar===';') tid = 'key-semicolon';
-            if(lowerChar===' ') tid = 'key-space';
-            
+            let tid = 'key-' + lowerChar; if(lowerChar===';') tid = 'key-semicolon'; if(lowerChar===' ') tid = 'key-space';
             const targetEl = document.getElementById(tid);
             const capsEl = document.getElementById('key-capslock');
 
@@ -653,11 +631,8 @@
             }
 
             if(isUpper) {
-                if(isCapsLockOn) { 
-                    if(targetEl) { targetEl.classList.add('active'); startTracer(lowerChar, targetEl); highlightFinger(lowerChar); } 
-                } else { 
-                    if(capsEl) { capsEl.classList.add('active'); document.getElementById('l-pinky').classList.add('active'); startTracer('capslock', capsEl); } 
-                }
+                if(isCapsLockOn) { if(targetEl) { targetEl.classList.add('active'); startTracer(lowerChar, targetEl); highlightFinger(lowerChar); } } 
+                else { if(capsEl) { capsEl.classList.add('active'); document.getElementById('l-pinky').classList.add('active'); startTracer('capslock', capsEl); } }
                 return;
             }
         }
@@ -694,11 +669,9 @@
             }
         }
 
-        // --- Leaderboard & Admin ---
         async function showLeaderboard() {
             const tbody = document.getElementById('lb-body'); tbody.innerHTML = '<tr><td colspan="5">載入中...</td></tr>';
             document.getElementById('leaderboard-modal').style.display = 'flex';
-            
             if(window.fetchLeaderboard) {
                 const records = await window.fetchLeaderboard();
                 tbody.innerHTML = '';
@@ -712,38 +685,9 @@
             }
         }
 
-        async function openAdminLogin() { document.getElementById('admin-login-modal').style.display = 'flex'; }
+        function openAdminLogin() { document.getElementById('admin-login-modal').style.display = 'flex'; }
+        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
         
-        async function verifyAdmin() {
-            if (document.getElementById('admin-pwd').value === '123456') {
-                document.getElementById('admin-login-modal').style.display = 'none'; 
-                document.getElementById('admin-pwd').value = '';
-                
-                // Load data
-                await refreshAdminData();
-                loadAdminSettingsUI();
-                
-                document.getElementById('admin-panel-modal').style.display = 'flex';
-            } else { alert('密碼錯誤！'); }
-        }
-
-        async function refreshAdminData() {
-            if(window.fetchAllScores) {
-                await window.fetchAllScores();
-                populateClassFilter();
-                renderAdminPanel();
-            }
-        }
-
-        function loadAdminSettingsUI() {
-            const config = window.getExamConfig();
-            document.getElementById('admin-exam-active').checked = config.isActive || false;
-            document.getElementById('admin-exam-content').value = config.content || "";
-            document.getElementById('admin-exam-time').value = config.time || "90";
-            document.getElementById('admin-exam-nohints').checked = config.noHints || false;
-            document.getElementById('admin-exam-nokeyboard').checked = config.noKeyboard || false;
-        }
-
         function populateClassFilter() {
             const records = window.getAllRecords(); 
             const classes = [...new Set(records.map(r => r.class))].sort();
@@ -755,7 +699,7 @@
         function renderAdminPanel() {
             const tbody = document.getElementById('admin-lb-body'); 
             tbody.innerHTML = '';
-            let records = window.getAllRecords();
+            let records = window.getAllRecords(); 
             
             const fClass = document.getElementById('filter-class').value;
             const fLevel = document.getElementById('filter-level').value;
@@ -763,57 +707,47 @@
 
             records = records.filter(rec => {
                 if (fClass && rec.class !== fClass) return false;
-                if (fLevel && String(rec.level) !== fLevel) return false;
+                // 強制轉 String 比對，避免 "1" !== 1
+                if (fLevel && String(rec.level) !== String(fLevel)) return false;
                 if (fDate && rec.filterDate !== fDate) return false;
                 return true;
             });
 
-            if(records.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6">無資料</td></tr>';
-            } else {
+            if(records.length===0) tbody.innerHTML = '<tr><td colspan="6">無資料</td></tr>';
+            else {
                 records.forEach(rec => {
                     tbody.innerHTML += `<tr><td><input type="checkbox" class="del-chk" data-id="${rec.id}"></td><td>${rec.class}</td><td>${rec.name}</td><td>${rec.level}</td><td>${rec.score}</td><td style="font-size:12px;">${rec.date}</td></tr>`; 
                 });
             }
         }
 
-        function resetFilters() {
-            document.getElementById('filter-class').value = ""; 
-            document.getElementById('filter-level').value=""; 
-            document.getElementById('filter-date').value=""; 
-            renderAdminPanel(); 
-        }
-
+        function resetFilters() { document.getElementById('filter-class').value=""; document.getElementById('filter-level').value=""; document.getElementById('filter-date').value=""; renderAdminPanel(); }
         function toggleAll(source) { document.querySelectorAll('.del-chk').forEach(cb => cb.checked = source.checked); }
-
         async function deleteSelected() {
-            if(!confirm("確定刪除選取項目？")) return;
+            if(!confirm("確定刪除？")) return;
             const checks = document.querySelectorAll('.del-chk:checked');
             const ids = Array.from(checks).map(cb => cb.dataset.id);
-            if(ids.length > 0 && window.deleteScores) {
-                await window.deleteScores(ids);
-                await refreshAdminData();
+            if(ids.length > 0 && window.deleteScores) { 
+                await window.deleteScores(ids); 
+                await window.refreshAdminData(); 
+                renderAdminPanel(); 
             }
         }
-
-        async function clearAllData() {
-            if(confirm("⚠️ 確定清空所有成績？")) {
-                if(window.clearAllScores) {
-                    await window.clearAllScores();
-                    await refreshAdminData();
-                }
-            }
+        async function clearAllData() { 
+            if(confirm("確定清空？") && window.clearAllScores) { 
+                await window.clearAllScores(); 
+                await window.refreshAdminData(); 
+                renderAdminPanel(); 
+            } 
         }
-
         function exportToExcel() {
-            // Re-filter just in case
-            let records = window.getAllRecords();
+            let records = window.getAllRecords(); 
             const fClass = document.getElementById('filter-class').value;
             const fLevel = document.getElementById('filter-level').value;
             const fDate = document.getElementById('filter-date').value;
             records = records.filter(rec => {
                 if (fClass && rec.class !== fClass) return false;
-                if (fLevel && String(rec.level) !== fLevel) return false;
+                if (fLevel && String(rec.level) !== String(fLevel)) return false;
                 if (fDate && rec.filterDate !== fDate) return false;
                 return true;
             });
@@ -823,8 +757,7 @@
             records.forEach(r => csv += `${r.class},${r.name},${r.level},${r.score},${r.date}\n`);
             const link = document.createElement("a"); 
             link.href = URL.createObjectURL(new Blob([csv], {type:'text/csv;charset=utf-8;'}));
-            link.download = "成績.csv"; 
-            link.click();
+            link.download = "成績.csv"; link.click();
         }
 
         function loadExamPreset() {
@@ -832,7 +765,6 @@
             let content = ""; for(let i=0; i<30; i++) { content += levels[lvl][Math.floor(Math.random()*levels[lvl].length)]; if(i%5==0) content+=" "; }
             document.getElementById('admin-exam-content').value = content;
         }
-
         function saveExamSettings() {
             const config = {
                 isActive: document.getElementById('admin-exam-active').checked,
@@ -843,7 +775,6 @@
             };
             if(window.saveExamConfigToFirebase) window.saveExamConfigToFirebase(config);
         }
-
         function switchAdminTab(tab) {
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
@@ -856,7 +787,6 @@
             }
         }
 
-        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
         function selectCaseOption(m) { selectedCaseMode = m; ['mixed','upper','lower'].forEach(id=>document.getElementById('opt-'+id).classList.remove('active')); document.getElementById('opt-'+m).classList.add('active'); }
         function selectLevel(l) { selectedLevel = l; [1,2,3,4].forEach(i=>document.getElementById('lvl-'+i).classList.remove('active')); document.getElementById('lvl-'+l).classList.add('active'); }
         function selectTime(t) { selectedTime = t; [30,60,90,120].forEach(i=>document.getElementById('time-'+i).classList.remove('active')); document.getElementById('time-'+t).classList.add('active'); }
