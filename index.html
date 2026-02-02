@@ -77,7 +77,6 @@
         .modal-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 12px rgba(0,0,0,0.15); }
         .modal-btn:active { transform: translateY(0); }
         
-        /* 1. 修改：時間到後的確定鍵 (紅色、大顆) */
         #result-modal .modal-btn {
             background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
             font-size: 32px; /* 字體加大 */
@@ -149,11 +148,12 @@
     <div id="setup-screen" class="screen-container">
         <h1>🎈 設定練習模式 🎈</h1>
         <div class="section-box">
-            <div class="section-title">第一步：選擇大小寫</div>
+            <div class="section-title">第一步：選擇字母樣子</div>
             <div class="option-group">
                 <button class="btn-opt active" id="opt-mixed" onclick="selectCaseOption('mixed')">大小皆可</button>
                 <button class="btn-opt" id="opt-upper" onclick="selectCaseOption('upper')">僅大寫</button>
                 <button class="btn-opt" id="opt-lower" onclick="selectCaseOption('lower')">僅小寫</button>
+                <button class="btn-opt" id="opt-strict-mixed" onclick="selectCaseOption('strict-mixed')">大小寫混合地去打</button>
             </div>
         </div>
         <div class="section-box">
@@ -246,17 +246,31 @@
                         <input type="checkbox" id="admin-exam-active"> 啟用考試模式 (學生登入後強制進入)
                     </label>
                     <div class="setting-row">
-                        <span>載入範本：</span>
+                        <span>出題模式：</span>
                         <select id="admin-exam-preset" class="filter-select" onchange="loadExamPreset()">
                             <option value="">-- 請選擇 --</option>
-                            <option value="1">Level 1 (中間排)</option>
-                            <option value="2">Level 2 (上排)</option>
-                            <option value="3">Level 3 (下排)</option>
-                            <option value="4">Level 4 (全鍵盤)</option>
+                            <option value="1">Level 1 (中間排 - 隨機)</option>
+                            <option value="2">Level 2 (上排 - 隨機)</option>
+                            <option value="3">Level 3 (下排 - 隨機)</option>
+                            <option value="4">Level 4 (全鍵盤 - 隨機)</option>
+                            <option value="custom">自定內容 (固定文章)</option>
                         </select>
                     </div>
-                    <p style="margin:5px 0; font-size:14px; color:#666;">考試內容 (單字請用空白隔開)：</p>
-                    <textarea id="admin-exam-content" class="exam-input" placeholder="例如: Apple Banana Cat"></textarea>
+                    
+                    <div id="admin-casemode-wrapper" class="setting-row">
+                        <span>字母樣子：</span>
+                        <select id="admin-exam-casemode" class="filter-select">
+                            <option value="mixed">大小皆可</option>
+                            <option value="upper">大寫</option>
+                            <option value="lower">小寫</option>
+                            <option value="strict-mixed">大小寫混合地去打</option>
+                        </select>
+                    </div>
+
+                    <div id="admin-content-wrapper" style="display:none;">
+                        <p style="margin:5px 0; font-size:14px; color:#666;">考試內容 (單字請用空白隔開)：</p>
+                        <textarea id="admin-exam-content" class="exam-input" placeholder="例如: Apple Banana Cat"></textarea>
+                    </div>
                     
                     <div class="setting-row">
                         <span>時間：</span>
@@ -337,7 +351,7 @@
 
         // Global
         let allRecords = [];
-        let examConfig = { isActive: false, content: "", time: 90, noHints: false, noKeyboard: false };
+        let examConfig = { isActive: false, content: "", time: 90, noHints: false, noKeyboard: false, caseMode: "mixed", levelMode: "custom" };
 
         // --- Auth Functions ---
         window.verifyAdmin = async function() {
@@ -419,7 +433,7 @@
                 const docRef = doc(db, "settings", "examConfig");
                 const docSnap = await getDoc(docRef);
                 if (docSnap.exists()) examConfig = docSnap.data();
-                else examConfig = { isActive: false, content: "", time: 90, noHints: false, noKeyboard: false };
+                else examConfig = { isActive: false, content: "", time: 90, noHints: false, noKeyboard: false, caseMode: "mixed", levelMode: "custom" };
                 return examConfig;
             } catch (e) { console.error(e); return { isActive: false }; }
         };
@@ -443,6 +457,9 @@
             document.getElementById('admin-exam-time').value = c.time||"90";
             document.getElementById('admin-exam-nohints').checked = c.noHints||false;
             document.getElementById('admin-exam-nokeyboard').checked = c.noKeyboard||false;
+            document.getElementById('admin-exam-casemode').value = c.caseMode || "mixed";
+            document.getElementById('admin-exam-preset').value = c.levelMode || "custom";
+            window.loadExamPreset(); // 初始化顯示狀態
         };
     </script>
 
@@ -450,6 +467,9 @@
         const levels = { 1:['a','s','d','f','g','h','j','k','l',';'], 2:['q','w','e','r','t','y','u','i','o','p'], 3:['z','x','c','v','b','n','m'], 4:['q','w','e','r','t','y','u','i','o','p','a','s','d','f','g','h','j','k','l',';','z','x','c','v','b','n','m'] };
         const homeRowMap = {'q':'a','w':'s','e':'d','r':'f','t':'f','y':'j','u':'j','i':'k','o':'l','p':';','z':'a','x':'s','c':'d','v':'f','b':'f','n':'j','m':'j','g':'f','h':'j'};
         const fingerMapping = {'l-pinky':['q','a','z'],'l-ring':['w','s','x'],'l-middle':['e','d','c'],'l-index':['r','f','v','t','g','b'],'r-index':['y','h','n','u','j','m'],'r-middle':['i','k'],'r-ring':['o','l'],'r-pinky':['p',';'],'l-thumb':[' '],'r-thumb':[' ']};
+        
+        // 增加：左手負責的字母集合 (用於判斷使用哪個 Shift 鍵)
+        const leftHandKeysSet = new Set(['q','w','e','r','t','a','s','d','f','g','z','x','c','v','b']);
 
         let currentUser = { name: '', classVal: '' };
         let selectedCaseMode = 'mixed';
@@ -463,6 +483,7 @@
         let timerInterval = null;
         
         let isExamMode = false;
+        let isRandomExam = false; // 新增：是否為隨機出字考試模式
         let examContentArray = [];
         let examWordIndex = 0;
         let examCharIndex = 0;
@@ -488,11 +509,26 @@
         function startExam() {
             const config = window.getExamConfig();
             selectedTime = parseInt(config.time);
-            let content = config.content || "Apple Banana Cat";
-            examContentArray = content.trim().split(/\s+/); 
-            if(examContentArray.length === 0) examContentArray = ['Apple'];
-            examWordIndex = 0; examCharIndex = 0;
+            selectedCaseMode = config.caseMode || 'mixed';
             
+            // 判斷是否為隨機出題模式
+            const mode = config.levelMode || 'custom';
+            
+            if (mode === 'custom') {
+                isRandomExam = false;
+                let content = config.content || "Apple Banana Cat";
+                examContentArray = content.trim().split(/\s+/); 
+                if(examContentArray.length === 0) examContentArray = ['Apple'];
+                
+                // 修改：自定模式下，不進行任何預處理，保持原始大小寫
+                // 且忽略 selectedCaseMode 的設定，直接使用原始文字
+                
+                examWordIndex = 0; examCharIndex = 0;
+            } else {
+                isRandomExam = true;
+                selectedLevel = parseInt(mode); // 設定級別 Lv1-Lv4
+            }
+
             const kb = document.getElementById('keyboard-ui');
             const hands = document.getElementById('hands-ui');
             if (config.noKeyboard) { kb.classList.add('hidden'); hands.classList.add('hidden'); } 
@@ -502,7 +538,7 @@
             document.getElementById('result-modal').style.display = 'none';
             document.getElementById('exam-entry-screen').style.display = 'none';
             document.getElementById('game-screen').style.display = 'flex';
-            document.getElementById('level-indicator').innerText = "考試模式";
+            document.getElementById('level-indicator').innerText = isRandomExam ? "考試: Lv" + selectedLevel : "考試模式";
             document.getElementById('player-display').innerText = `${currentUser.classVal} - ${currentUser.name}`;
             document.getElementById('timer').innerText = timeLeft;
             updateScore();
@@ -520,6 +556,7 @@
 
         function startGame() {
             isExamMode = false;
+            isRandomExam = false;
             score = 0; timeLeft = selectedTime; isGameRunning = true;
             document.getElementById('keyboard-ui').classList.remove('hidden');
             document.getElementById('hands-ui').classList.remove('hidden');
@@ -561,7 +598,9 @@
 
         function nextChar() {
             if (!isGameRunning) return;
-            if (isExamMode) {
+            
+            // 如果是考試模式，且不是隨機出字 (即自定內容模式)
+            if (isExamMode && !isRandomExam) {
                 if (examWordIndex >= examContentArray.length) examWordIndex = 0;
                 let currentWord = examContentArray[examWordIndex];
                 if (examCharIndex >= currentWord.length) {
@@ -572,14 +611,31 @@
                 currentTarget = currentWord[examCharIndex];
                 updateExamDisplay(currentWord, examCharIndex);
             } else {
+                // 練習模式 OR 隨機出字的考試模式
                 const chars = levels[selectedLevel];
                 let char = chars[Math.floor(Math.random() * chars.length)];
-                if (selectedCaseMode === 'mixed') char = char.toLowerCase();
-                else if (selectedCaseMode === 'upper') char = char.toUpperCase();
-                else if (selectedCaseMode === 'lower') char = char.toLowerCase();
-                currentTarget = char;
+                
+                // 修改：大小寫邏輯
+                if (selectedCaseMode === 'mixed') {
+                    // 原有的 mixed 是顯示大寫，但大小寫輸入皆可
+                    char = char.toLowerCase();
+                    currentTarget = char; // 邏輯上存小寫，但顯示大寫
+                } else if (selectedCaseMode === 'strict-mixed') {
+                    // 新增模式：隨機大寫或小寫
+                    const isUpper = Math.random() < 0.5;
+                    currentTarget = isUpper ? char.toUpperCase() : char.toLowerCase();
+                } else if (selectedCaseMode === 'upper') {
+                    char = char.toUpperCase();
+                    currentTarget = char;
+                } else if (selectedCaseMode === 'lower') {
+                    char = char.toLowerCase();
+                    currentTarget = char;
+                }
+                
                 const display = document.getElementById('target-char');
-                display.innerText = (selectedCaseMode === 'mixed') ? char.toUpperCase() : char;
+                // 原有 mixed 顯示大寫
+                if (selectedCaseMode === 'mixed') display.innerText = char.toUpperCase();
+                else display.innerText = currentTarget;
             }
             const d = document.getElementById('target-char');
             d.classList.remove('bounce', 'shake');
@@ -610,7 +666,9 @@
             if (!currentTarget) return;
             const lowerChar = currentTarget.toLowerCase();
             let isUpper = (currentTarget !== lowerChar) && (currentTarget !== ';') && (currentTarget !== ' ');
-            if (!isExamMode && selectedCaseMode === 'mixed') isUpper = false;
+            
+            // 原有 mixed 邏輯：不視為強制大寫 (適用於練習模式 及 隨機考試模式)
+            if ((!isExamMode || isRandomExam) && selectedCaseMode === 'mixed') isUpper = false;
 
             document.querySelectorAll('.key').forEach(k => k.classList.remove('active'));
             document.querySelectorAll('.finger').forEach(f => f.classList.remove('active'));
@@ -621,7 +679,29 @@
             const targetEl = document.getElementById(tid);
             const capsEl = document.getElementById('key-capslock');
 
-            if(!isUpper || (isExamMode && currentTarget === lowerChar)) {
+            // --- strict-mixed 處理邏輯 (雙手 Shift 分工) ---
+            if (selectedCaseMode === 'strict-mixed' && isUpper) {
+                if(targetEl) {
+                    targetEl.classList.add('active'); // 高亮字母鍵
+                    startTracer(lowerChar, targetEl);
+                }
+
+                if (leftHandKeysSet.has(lowerChar)) {
+                    document.getElementById('key-shift-r').classList.add('active');
+                    document.getElementById('r-pinky').classList.add('active');
+                } else {
+                    document.getElementById('key-shift-l').classList.add('active');
+                    document.getElementById('l-pinky').classList.add('active');
+                }
+                
+                highlightFinger(lowerChar);
+                return; 
+            }
+            // --------------------------------------------------
+
+            // 判斷是否需要高亮 (如果不是大寫，或者是在自定考試模式下且輸入正確的字符)
+            // 修改邏輯：如果不是大寫，或者 (是固定內容考試 且 當前目標是小寫)
+            if(!isUpper || (isExamMode && !isRandomExam && currentTarget === lowerChar)) {
                 if(targetEl) { 
                     targetEl.classList.add('active'); 
                     if (lowerChar !== ' ') { startTracer(lowerChar, targetEl); highlightFinger(lowerChar); } 
@@ -707,7 +787,6 @@
 
             records = records.filter(rec => {
                 if (fClass && rec.class !== fClass) return false;
-                // 強制轉 String 比對，避免 "1" !== 1
                 if (fLevel && String(rec.level) !== String(fLevel)) return false;
                 if (fDate && rec.filterDate !== fDate) return false;
                 return true;
@@ -760,18 +839,30 @@
             link.download = "成績.csv"; link.click();
         }
 
+        // 修改：loadExamPreset 現在負責控制輸入框 和 字母樣子選擇 的顯示/隱藏
         function loadExamPreset() {
-            const lvl = document.getElementById('admin-exam-preset').value; if (!lvl) return;
-            let content = ""; for(let i=0; i<30; i++) { content += levels[lvl][Math.floor(Math.random()*levels[lvl].length)]; if(i%5==0) content+=" "; }
-            document.getElementById('admin-exam-content').value = content;
+            const lvl = document.getElementById('admin-exam-preset').value; 
+            const contentWrapper = document.getElementById('admin-content-wrapper');
+            const caseWrapper = document.getElementById('admin-casemode-wrapper');
+            
+            if (lvl === 'custom') {
+                contentWrapper.style.display = 'block'; // 顯示輸入框
+                caseWrapper.style.display = 'none'; // 隱藏字母樣子 (強制原始)
+            } else {
+                contentWrapper.style.display = 'none'; // 隱藏輸入框
+                caseWrapper.style.display = 'flex'; // 顯示字母樣子
+            }
         }
+
         function saveExamSettings() {
             const config = {
                 isActive: document.getElementById('admin-exam-active').checked,
                 content: document.getElementById('admin-exam-content').value,
                 time: document.getElementById('admin-exam-time').value,
                 noHints: document.getElementById('admin-exam-nohints').checked,
-                noKeyboard: document.getElementById('admin-exam-nokeyboard').checked
+                noKeyboard: document.getElementById('admin-exam-nokeyboard').checked,
+                caseMode: document.getElementById('admin-exam-casemode').value,
+                levelMode: document.getElementById('admin-exam-preset').value // 儲存選擇的出題模式 (Lv1-4 or Custom)
             };
             if(window.saveExamConfigToFirebase) window.saveExamConfigToFirebase(config);
         }
@@ -787,7 +878,11 @@
             }
         }
 
-        function selectCaseOption(m) { selectedCaseMode = m; ['mixed','upper','lower'].forEach(id=>document.getElementById('opt-'+id).classList.remove('active')); document.getElementById('opt-'+m).classList.add('active'); }
+        function selectCaseOption(m) { 
+            selectedCaseMode = m; 
+            ['mixed','upper','lower','strict-mixed'].forEach(id=>document.getElementById('opt-'+id).classList.remove('active')); 
+            document.getElementById('opt-'+m).classList.add('active'); 
+        }
         function selectLevel(l) { selectedLevel = l; [1,2,3,4].forEach(i=>document.getElementById('lvl-'+i).classList.remove('active')); document.getElementById('lvl-'+l).classList.add('active'); }
         function selectTime(t) { selectedTime = t; [30,60,90,120].forEach(i=>document.getElementById('time-'+i).classList.remove('active')); document.getElementById('time-'+t).classList.add('active'); }
         function highlightFinger(char) {
@@ -810,21 +905,33 @@
             const input = e.key;
             let isCorrect = false;
             
-            if (isExamMode) {
+            // 邏輯修正：如果是「自定內容考試」模式，強制使用嚴格比對 (完全不看 selectedCaseMode)
+            if (isExamMode && !isRandomExam) {
                 if (input === currentTarget) isCorrect = true;
             } else {
-                if (selectedCaseMode === 'mixed') { if (input.toLowerCase() === currentTarget.toLowerCase()) isCorrect = true; } 
-                else { if (input === currentTarget) isCorrect = true; }
+                // 練習模式 OR 隨機考試模式
+                if (selectedCaseMode === 'mixed') { 
+                    if (input.toLowerCase() === currentTarget.toLowerCase()) isCorrect = true; 
+                } else if (selectedCaseMode === 'strict-mixed') {
+                    if (input === currentTarget) isCorrect = true;
+                } else { 
+                    if (input === currentTarget) isCorrect = true; 
+                }
             }
 
             if(isCorrect) {
                 playSuccessSound(); score+=10; updateScore();
-                const bounceEl = isExamMode ? document.querySelector('.char-current') : document.getElementById('target-char');
+                // 如果是自定內容考試，使用 char-current；如果是隨機考試，使用 target-char
+                const bounceEl = (isExamMode && !isRandomExam) ? document.querySelector('.char-current') : document.getElementById('target-char');
                 if(bounceEl) bounceEl.style.color = '#32cd32'; 
-                if (isExamMode) { examCharIndex++; nextChar(); } 
-                else { document.getElementById('target-char').classList.add('bounce'); setTimeout(nextChar, 200); }
+                
+                if (isExamMode && !isRandomExam) { 
+                    examCharIndex++; nextChar(); 
+                } else { 
+                    document.getElementById('target-char').classList.add('bounce'); setTimeout(nextChar, 200); 
+                }
             } else {
-                const shakeEl = isExamMode ? document.querySelector('.target-display') : document.getElementById('target-char');
+                const shakeEl = (isExamMode && !isRandomExam) ? document.querySelector('.target-display') : document.getElementById('target-char');
                 shakeEl.classList.remove('shake'); void shakeEl.offsetWidth; shakeEl.classList.add('shake');
             }
         });
