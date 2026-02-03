@@ -16,24 +16,110 @@
         body { font-family: "Comic Sans MS", "Microsoft JhengHei", sans-serif; background-color: var(--bg-color); margin: 0; user-select: none; overflow: hidden; height: 100vh; width: 100vw; display: flex; justify-content: center; align-items: center; }
         h1 { color: var(--primary-color); margin: 0 0 1vh 0; font-size: clamp(24px, 4vh, 36px); text-align: center; text-shadow: 2px 2px white;}
         
-        .screen-container { display: flex; flex-direction: column; align-items: center; background: white; padding: 2vh 3vw; border-radius: 25px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); width: 90%; max-width: 600px; text-align: center; overflow-y: auto; max-height: 95vh; border: 5px solid #e0f0ff; }
-        .input-group { margin: 20px 0; width: 80%; }
-        .input-label { display: block; font-size: 20px; color: #555; margin-bottom: 5px; font-weight: bold; }
-        .input-field { width: 100%; padding: 12px; font-size: 20px; border: 3px solid #ccc; border-radius: 15px; text-align: center; outline: none; font-family: inherit; box-sizing: border-box; }
-        .btn-next { margin-top: 20px; padding: 12px 40px; background: #4682b4; color: white; border: none; border-radius: 50px; font-size: 22px; cursor: pointer; font-weight: bold; box-shadow: 0 5px 0 #2e5a7e; }
+        .screen-container { display: flex; flex-direction: column; align-items: center; background: white; padding: 2vh 3vw; border-radius: 30px; box-shadow: 0 10px 20px rgba(0,0,0,0.15); width: 90%; max-width: 650px; text-align: center; overflow-y: auto; max-height: 98vh; border: 8px solid #b3e5fc; }
+        
+        .input-group { margin: 15px 0; width: 90%; }
+        .input-label { display: block; font-size: 22px; color: #444; margin-bottom: 8px; font-weight: bold; }
+        .input-field { width: 100%; padding: 15px; font-size: 24px; border: 4px solid #ddd; border-radius: 20px; text-align: center; outline: none; font-family: inherit; box-sizing: border-box; background: #fafafa; }
+        .input-field:focus { border-color: #4682b4; background: #fff; }
+        
+        .btn-next { margin-top: 20px; padding: 15px 60px; background: #2196F3; color: white; border: none; border-radius: 50px; font-size: 28px; cursor: pointer; font-weight: bold; box-shadow: 0 8px 0 #0d47a1; transition: transform 0.1s; width: 80%; }
+        .btn-next:active { transform: translateY(4px); box-shadow: 0 4px 0 #0d47a1; }
         
         #setup-screen, #exam-entry-screen { display: none; }
-        .section-box { margin-bottom: 1.5vh; width: 100%; }
-        .section-title { font-size: clamp(16px, 2.5vh, 20px); color: #555; margin-bottom: 1vh; font-weight: bold; }
-        .option-group { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; }
-        .btn-opt { border: 2px solid #ccc; padding: 8px 16px; border-radius: 50px; cursor: pointer; background: white; color: #666; font-family: inherit; }
-        .btn-opt.active { background: var(--primary-color); color: white; border-color: var(--primary-color); transform: scale(1.05); }
-        .btn-level-opt { width: 48%; margin: 5px 0; padding: 10px; border: 2px solid #ddd; border-radius: 15px; cursor: pointer; background: #f9f9f9; color: #555; }
-        .btn-level-opt.active { border-color: var(--primary-color); background: #e6f3ff; box-shadow: 0 0 0 2px var(--primary-color); }
-        .btn-start { margin-top: 1vh; padding: 15px 40px; width: 80%; background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%); border: none; border-radius: 50px; font-size: 24px; font-weight: bold; color: white; cursor: pointer; box-shadow: 0 5px 15px rgba(255, 105, 180, 0.4); }
+        .section-box { margin-bottom: 2vh; width: 100%; background: #fdfdfd; padding: 10px; border-radius: 20px; }
+        .section-title { font-size: 20px; color: #444; margin-bottom: 10px; font-weight: bold; background: #e3f2fd; display: inline-block; padding: 5px 20px; border-radius: 15px; }
+        
+        .option-group { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
+        
+        .btn-opt { 
+            border: none; 
+            padding: 12px 20px; 
+            border-radius: 25px; 
+            cursor: pointer; 
+            color: white; 
+            font-family: inherit; 
+            font-size: 18px; 
+            font-weight: bold; 
+            min-width: 100px;
+            box-shadow: 0 5px 0 rgba(0,0,0,0.2); 
+            transition: all 0.2s;
+        }
+        .btn-opt:active { transform: translateY(3px); box-shadow: 0 2px 0 rgba(0,0,0,0.2); }
+        
+        /* --- 修改：選中狀態改為「黑色粗框」 --- */
+        .btn-opt.active { 
+            /* 原本是 white，現在改為 black (#000) */
+            box-shadow: 0 0 0 4px #000, 0 6px 10px rgba(0,0,0,0.3); 
+            transform: scale(1.05); 
+            z-index: 5;
+        }
+
+        .color-opt-cyan   { background: #00BCD4; } 
+        .color-opt-red    { background: #FF7043; } 
+        .color-opt-green  { background: #9CCC65; } 
+        .color-opt-purple { background: #AB47BC; } 
+        .color-opt-gray   { background: #B0BEC5; color: #444; } 
+        
+        .btn-time-opt {
+            background: #eee; color: #555; border: none; box-shadow: 0 4px 0 #ccc;
+        }
+        /* --- 修改：時間按鈕選中也加黑色粗框 --- */
+        .btn-time-opt.active {
+            background: #4682b4; color: white; 
+            box-shadow: 0 0 0 4px #000, 0 4px 0 #2c5c85; /* 加入黑色外框 */
+        }
+
+        .btn-level-opt { 
+            width: 48%; 
+            margin: 5px 0; 
+            padding: 15px 10px; 
+            border: none; 
+            border-radius: 25px; 
+            cursor: pointer; 
+            color: #fff; 
+            font-size: 20px; 
+            font-weight: bold;
+            box-shadow: 0 6px 0 rgba(0,0,0,0.2); 
+            transition: all 0.2s;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+            position: relative;
+        }
+        .btn-level-opt:active { transform: translateY(4px); box-shadow: 0 2px 0 rgba(0,0,0,0.2); }
+        .btn-level-opt .level-desc { display: block; font-size: 14px; opacity: 0.9; font-weight: normal; margin-top: 5px; }
+        
+        .color-yellow { background: #FFD54F; color: #5d4037; } 
+        .color-blue { background: #4FC3F7; } 
+        .color-purple { background: #9575CD; } 
+        .color-orange { background: #FF8A65; } 
+
+        /* --- 修改：Level按鈕選中狀態改為「黑色粗框」 --- */
+        .btn-level-opt.active { 
+            /* 原本是 white，現在改為 black (#000) */
+            box-shadow: 0 0 0 5px #000, 0 8px 15px rgba(0,0,0,0.3); 
+            transform: scale(1.02); 
+            z-index: 10; 
+        }
+
+        .btn-start { 
+            margin-top: 2vh; 
+            padding: 15px 40px; 
+            width: 90%; 
+            background: #66BB6A; 
+            border: none; 
+            border-radius: 50px; 
+            font-size: 32px; 
+            font-weight: 900; 
+            color: white; 
+            cursor: pointer; 
+            box-shadow: 0 8px 0 #2E7D32; 
+            transition: all 0.1s;
+        }
+        .btn-start:active { transform: translateY(6px); box-shadow: 0 2px 0 #2E7D32; }
         .btn-exam-start { background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%); box-shadow: 0 5px 15px rgba(255, 0, 0, 0.4); animation: pulse 1.5s infinite; }
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
-        .btn-leaderboard { margin-top: 15px; background: none; border: 2px solid #ffd700; padding: 8px 20px; border-radius: 20px; cursor: pointer; color: #d4a000; font-weight: bold; }
+        
+        .btn-leaderboard { margin-top: 15px; background: white; border: 2px solid #ffd700; padding: 10px 25px; border-radius: 30px; cursor: pointer; color: #f9a825; font-weight: bold; font-size: 16px; }
 
         #game-screen { display: none; flex-direction: column; align-items: center; justify-content: flex-start; width: 100%; height: 100%; padding-top: 2vh; box-sizing: border-box; }
         .back-btn { position: absolute; top: 10px; left: 10px; z-index: 100; background: #fff; border: 2px solid #ddd; padding: 5px 15px; border-radius: 20px; cursor: pointer; }
@@ -147,34 +233,38 @@
 
     <div id="setup-screen" class="screen-container">
         <h1>🎈 設定練習模式 🎈</h1>
-        <div class="section-box">
-            <div class="section-title">第一步：選擇字母樣子</div>
+        
+        <div class="section-box" style="padding: 5px; background: transparent;">
+             <div class="section-title" style="font-size: 18px; margin-bottom: 10px;">Step 1: 字母樣子 (選顏色)</div>
+             <div class="option-group">
+                 <button class="btn-opt color-opt-cyan active" id="opt-mixed" onclick="selectCaseOption('mixed')">大小皆可</button>
+                 <button class="btn-opt color-opt-red" id="opt-upper" onclick="selectCaseOption('upper')">僅大寫</button>
+                 <button class="btn-opt color-opt-green" id="opt-lower" onclick="selectCaseOption('lower')">僅小寫</button>
+                 <button class="btn-opt color-opt-purple" id="opt-strict-mixed" onclick="selectCaseOption('strict-mixed')">混合打</button>
+             </div>
+        </div>
+
+        <div class="section-box" style="background: transparent;">
+            <div class="section-title" style="font-size: 24px; color: #333;">👇 Step 2: 選顏色 (Level) 👇</div>
             <div class="option-group">
-                <button class="btn-opt active" id="opt-mixed" onclick="selectCaseOption('mixed')">大小皆可</button>
-                <button class="btn-opt" id="opt-upper" onclick="selectCaseOption('upper')">僅大寫</button>
-                <button class="btn-opt" id="opt-lower" onclick="selectCaseOption('lower')">僅小寫</button>
-                <button class="btn-opt" id="opt-strict-mixed" onclick="selectCaseOption('strict-mixed')">大小寫混合地去打</button>
+                <button class="btn-level-opt color-yellow active" id="lvl-1" onclick="selectLevel(1)">Level 1<span class="level-desc">中間排 (黃)</span></button>
+                <button class="btn-level-opt color-blue" id="lvl-2" onclick="selectLevel(2)">Level 2<span class="level-desc">上排 (藍)</span></button>
+                <button class="btn-level-opt color-purple" id="lvl-3" onclick="selectLevel(3)">Level 3<span class="level-desc">下排 (紫)</span></button>
+                <button class="btn-level-opt color-orange" id="lvl-4" onclick="selectLevel(4)">Level 4<span class="level-desc">全鍵盤 (橙)</span></button>
             </div>
         </div>
-        <div class="section-box">
-            <div class="section-title">第二步：選擇練習級別</div>
+
+        <div class="section-box" style="padding: 5px; background: transparent;">
+            <div class="section-title" style="font-size: 16px; margin-bottom: 5px;">Step 3: 時間 (秒)</div>
             <div class="option-group">
-                <button class="btn-level-opt active" id="lvl-1" onclick="selectLevel(1)">Level 1 <span class="level-desc">中間排</span></button>
-                <button class="btn-level-opt" id="lvl-2" onclick="selectLevel(2)">Level 2 <span class="level-desc">上排</span></button>
-                <button class="btn-level-opt" id="lvl-3" onclick="selectLevel(3)">Level 3 <span class="level-desc">下排</span></button>
-                <button class="btn-level-opt" id="lvl-4" onclick="selectLevel(4)">Level 4 <span class="level-desc">全鍵盤</span></button>
+                <button class="btn-opt btn-time-opt" id="time-30" onclick="selectTime(30)">30</button>
+                <button class="btn-opt btn-time-opt" id="time-60" onclick="selectTime(60)">60</button>
+                <button class="btn-opt btn-time-opt active" id="time-90" onclick="selectTime(90)">90</button>
+                <button class="btn-opt btn-time-opt" id="time-120" onclick="selectTime(120)">120</button>
             </div>
         </div>
-        <div class="section-box">
-            <div class="section-title">第三步：設定計時 (秒)</div>
-            <div class="option-group">
-                <button class="btn-opt" id="time-30" onclick="selectTime(30)">30秒</button>
-                <button class="btn-opt" id="time-60" onclick="selectTime(60)">60秒</button>
-                <button class="btn-opt active" id="time-90" onclick="selectTime(90)">90秒</button>
-                <button class="btn-opt" id="time-120" onclick="selectTime(120)">120秒</button>
-            </div>
-        </div>
-        <button class="btn-start" onclick="startGame()">🚀 開始遊戲</button>
+        
+        <button class="btn-start" onclick="startGame()">🚀 開始遊戲 (GO)</button>
         <button class="btn-leaderboard" onclick="showLeaderboard()">🏆 查看排名榜</button>
     </div>
 
@@ -213,7 +303,7 @@
         <div class="modal-content" style="width: 500px;">
             <h2 style="color: #4682b4;">🏆 排名榜 🏆</h2>
             <div style="max-height: 400px; overflow-y: auto;">
-                <table class="lb-table"><thead><tr><th>排名</th><th>姓名</th><th>班別</th><th>級別</th><th>分數</th></tr></thead><tbody id="lb-body"></tbody></table>
+                <table class="lb-table"><thead><tr><th>排名</th><th>姓名</th><th>班別</th><th>級別</th><th>分數</th><th>錯字</th></tr></thead><tbody id="lb-body"></tbody></table>
             </div>
             <button class="modal-btn btn-neutral" onclick="closeModal('leaderboard-modal')" style="width: 100%; margin-top: 15px;">關閉</button>
         </div>
@@ -315,7 +405,7 @@
 
                 <div style="max-height: 300px; overflow-y: auto; border: 1px solid #eee; border-radius: 10px;">
                     <table class="lb-table">
-                        <thead><tr><th style="width: 40px;"><input type="checkbox" onchange="toggleAll(this)"></th><th>班別</th><th>姓名</th><th>級別</th><th>分數</th><th>日期</th></tr></thead>
+                        <thead><tr><th style="width: 40px;"><input type="checkbox" onchange="toggleAll(this)"></th><th>班別</th><th>姓名</th><th>級別</th><th>分數</th><th>錯字</th><th>日期</th></tr></thead>
                         <tbody id="admin-lb-body"></tbody>
                     </table>
                 </div>
@@ -388,7 +478,8 @@
 
         window.fetchLeaderboard = async function() {
             try {
-                const q = query(collection(db, "scores"), orderBy("score", "desc"), limit(50));
+                // 修改：移除了 limit(50)，現在會抓取所有資料
+                const q = query(collection(db, "scores"), orderBy("score", "desc"));
                 const querySnapshot = await getDocs(q);
                 let records = [];
                 querySnapshot.forEach((doc) => records.push(doc.data()));
@@ -478,6 +569,7 @@
         let timeLeft = 90;
         let currentTarget = '';
         let score = 0;
+        let mistakeCount = 0; // 新增：錯字計數
         let isGameRunning = false;
         let isCapsLockOn = false; 
         let timerInterval = null;
@@ -534,7 +626,7 @@
             if (config.noKeyboard) { kb.classList.add('hidden'); hands.classList.add('hidden'); } 
             else { kb.classList.remove('hidden'); hands.classList.remove('hidden'); }
 
-            score = 0; timeLeft = selectedTime; isGameRunning = true;
+            score = 0; mistakeCount = 0; timeLeft = selectedTime; isGameRunning = true;
             document.getElementById('result-modal').style.display = 'none';
             document.getElementById('exam-entry-screen').style.display = 'none';
             document.getElementById('game-screen').style.display = 'flex';
@@ -557,7 +649,7 @@
         function startGame() {
             isExamMode = false;
             isRandomExam = false;
-            score = 0; timeLeft = selectedTime; isGameRunning = true;
+            score = 0; mistakeCount = 0; timeLeft = selectedTime; isGameRunning = true;
             document.getElementById('keyboard-ui').classList.remove('hidden');
             document.getElementById('hands-ui').classList.remove('hidden');
             document.getElementById('result-modal').style.display = 'none';
@@ -582,7 +674,8 @@
             isGameRunning = false; clearInterval(timerInterval);
             const now = new Date();
             const dateStr = now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0');
-            const record = { name: currentUser.name, class: currentUser.classVal, level: isExamMode ? "Exam" : selectedLevel, score: score, date: now.toLocaleString(), filterDate: dateStr };
+            // 修改：加入 mistakes 記錄到資料庫
+            const record = { name: currentUser.name, class: currentUser.classVal, level: isExamMode ? "Exam" : selectedLevel, score: score, mistakes: mistakeCount, date: now.toLocaleString(), filterDate: dateStr };
             if(window.saveScoreToFirebase) window.saveScoreToFirebase(record);
             document.getElementById('final-score').innerText = score;
             document.getElementById('result-modal').style.display = 'flex';
@@ -755,11 +848,12 @@
             if(window.fetchLeaderboard) {
                 const records = await window.fetchLeaderboard();
                 tbody.innerHTML = '';
-                if(records.length === 0) tbody.innerHTML = '<tr><td colspan="5">暫無紀錄</td></tr>';
+                if(records.length === 0) tbody.innerHTML = '<tr><td colspan="6">暫無紀錄</td></tr>';
                 else {
                     records.forEach((rec, index) => {
                         let rankHTML = index+1; if(index==0) rankHTML='🥇'; else if(index==1) rankHTML='🥈'; else if(index==2) rankHTML='🥉';
-                        tbody.innerHTML += `<tr><td>${rankHTML}</td><td>${rec.name}</td><td>${rec.class}</td><td>${rec.level==='Exam'?'📝':('Lv.'+rec.level)}</td><td style="font-weight:bold;">${rec.score}</td></tr>`;
+                        // 修改：增加錯字欄位顯示
+                        tbody.innerHTML += `<tr><td>${rankHTML}</td><td>${rec.name}</td><td>${rec.class}</td><td>${rec.level==='Exam'?'📝':('Lv.'+rec.level)}</td><td style="font-weight:bold;">${rec.score}</td><td>${rec.mistakes || 0}</td></tr>`;
                     });
                 }
             }
@@ -795,10 +889,11 @@
             // 修改排序邏輯：按分數從高到低排
             records.sort((a, b) => (b.score || 0) - (a.score || 0));
 
-            if(records.length===0) tbody.innerHTML = '<tr><td colspan="6">無資料</td></tr>';
+            if(records.length===0) tbody.innerHTML = '<tr><td colspan="7">無資料</td></tr>';
             else {
                 records.forEach(rec => {
-                    tbody.innerHTML += `<tr><td><input type="checkbox" class="del-chk" data-id="${rec.id}"></td><td>${rec.class}</td><td>${rec.name}</td><td>${rec.level}</td><td>${rec.score}</td><td style="font-size:12px;">${rec.date}</td></tr>`; 
+                    // 修改：增加錯字欄位顯示
+                    tbody.innerHTML += `<tr><td><input type="checkbox" class="del-chk" data-id="${rec.id}"></td><td>${rec.class}</td><td>${rec.name}</td><td>${rec.level}</td><td>${rec.score}</td><td>${rec.mistakes || 0}</td><td style="font-size:12px;">${rec.date}</td></tr>`; 
                 });
             }
         }
@@ -835,8 +930,8 @@
             });
 
             if(records.length===0) return alert("無資料");
-            let csv = "\uFEFF班別,姓名,級別,分數,日期\n"; 
-            records.forEach(r => csv += `${r.class},${r.name},${r.level},${r.score},${r.date}\n`);
+            let csv = "\uFEFF班別,姓名,級別,分數,錯字,日期\n"; 
+            records.forEach(r => csv += `${r.class},${r.name},${r.level},${r.score},${r.mistakes||0},${r.date}\n`);
             const link = document.createElement("a"); 
             link.href = URL.createObjectURL(new Blob([csv], {type:'text/csv;charset=utf-8;'}));
             link.download = "成績.csv"; link.click();
@@ -934,6 +1029,8 @@
                     document.getElementById('target-char').classList.add('bounce'); setTimeout(nextChar, 200); 
                 }
             } else {
+                // 修改：打錯不扣分，只增加錯字計數
+                mistakeCount++;
                 const shakeEl = (isExamMode && !isRandomExam) ? document.querySelector('.target-display') : document.getElementById('target-char');
                 shakeEl.classList.remove('shake'); void shakeEl.offsetWidth; shakeEl.classList.add('shake');
             }
