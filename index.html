@@ -212,11 +212,11 @@
         <div style="margin-top: 20px; width: 100%;">
             <div class="input-group" style="margin: 0 auto 20px auto;">
                 <label class="input-label">學號 ( No.)：</label>
-                <input type="text" id="input-name" class="input-field" placeholder="請輸入學號" autocomplete="off">
+                <input type="text" id="input-name" class="input-field" placeholder="例如:01" autocomplete="off">
             </div>
             <div class="input-group" style="margin: 0 auto 20px auto;">
                 <label class="input-label">班別 (Class)：</label>
-                <input type="text" id="input-class" class="input-field" placeholder="例如: 1A" autocomplete="off">
+                <input type="text" id="input-class" class="input-field" placeholder="例如: P1S" autocomplete="off">
             </div>
             <button class="btn-next" onclick="enterSetup()">下一步 ➡️</button>
         </div>
@@ -245,7 +245,7 @@
         </div>
 
         <div class="section-box" style="background: transparent;">
-            <div class="section-title" style="font-size: 24px; color: #333;">👇 Step 2: 選顏色 (Level) 👇</div>
+            <div class="section-title" style="font-size: 24px; color: #333;">👇 Step 2:Level  (選顏色) 👇</div>
             <div class="option-group">
                 <button class="btn-level-opt color-yellow active" id="lvl-1" onclick="selectLevel(1)">Level 1<span class="level-desc">中間排 (黃)</span></button>
                 <button class="btn-level-opt color-blue" id="lvl-2" onclick="selectLevel(2)">Level 2<span class="level-desc">上排 (藍)</span></button>
@@ -314,7 +314,7 @@
             <h3>🔑 老師專用區</h3>
             <div class="admin-login-box">
                 <input type="email" id="admin-email" class="input-field" placeholder="Email" style="font-size: 16px; margin-bottom: 10px;">
-                <input type="password" id="admin-pwd" class="input-field" placeholder="密碼 PW)" style="font-size: 16px;">
+                <input type="password" id="admin-pwd" class="input-field" placeholder="密碼 (PW)" style="font-size: 16px;">
                 <button class="modal-btn btn-primary" style="width:100%" onclick="verifyAdmin()">登入</button>
                 <button class="modal-btn btn-neutral" style="width:100%" onclick="closeModal('admin-login-modal')">取消</button>
             </div>
