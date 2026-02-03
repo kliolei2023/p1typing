@@ -10,13 +10,13 @@
             --primary-color: #4682b4; --hand-skin: #f3cba6; --finger-highlight: #ff6347;
             --c-l-pinky:#ffb7b2; --c-l-ring:#ffdac1; --c-l-middle:#fff2cc; --c-l-index:#e2f0cb;
             --c-r-index:#b5ead7; --c-r-middle:#c7ceea; --c-r-ring:#e0c3fc; --c-r-pinky:#ffcbf2; --c-func:#e0e0e0;
-            --base-key-width: clamp(28px, 4.6vw, 54px); --key-gap: clamp(2px, 0.4vw, 6px);
+            --base-key-width: clamp(26px, 4.8vw, 52px); --key-gap: clamp(2px, 0.4vw, 5px);
         }
 
         body { font-family: "Comic Sans MS", "Microsoft JhengHei", sans-serif; background-color: var(--bg-color); margin: 0; user-select: none; overflow: hidden; height: 100vh; width: 100vw; display: flex; justify-content: center; align-items: center; }
         h1 { color: var(--primary-color); margin: 0 0 1vh 0; font-size: clamp(24px, 4vh, 36px); text-align: center; text-shadow: 2px 2px white;}
         
-        .screen-container { display: flex; flex-direction: column; align-items: center; background: white; padding: 2vh 3vw; border-radius: 30px; box-shadow: 0 10px 20px rgba(0,0,0,0.15); width: 95%; max-width: 900px; text-align: center; overflow-y: auto; max-height: 98vh; border: 8px solid #b3e5fc; }
+        .screen-container { display: flex; flex-direction: column; align-items: center; background: white; padding: 2vh 3vw; border-radius: 30px; box-shadow: 0 10px 20px rgba(0,0,0,0.15); width: 90%; max-width: 650px; text-align: center; overflow-y: auto; max-height: 98vh; border: 8px solid #b3e5fc; }
         
         .input-group { margin: 15px 0; width: 90%; }
         .input-label { display: block; font-size: 22px; color: #444; margin-bottom: 8px; font-weight: bold; }
@@ -47,7 +47,9 @@
         }
         .btn-opt:active { transform: translateY(3px); box-shadow: 0 2px 0 rgba(0,0,0,0.2); }
         
+        /* --- 修改：選中狀態改為「黑色粗框」 --- */
         .btn-opt.active { 
+            /* 原本是 white，現在改為 black (#000) */
             box-shadow: 0 0 0 4px #000, 0 6px 10px rgba(0,0,0,0.3); 
             transform: scale(1.05); 
             z-index: 5;
@@ -62,21 +64,21 @@
         .btn-time-opt {
             background: #eee; color: #555; border: none; box-shadow: 0 4px 0 #ccc;
         }
+        /* --- 修改：時間按鈕選中也加黑色粗框 --- */
         .btn-time-opt.active {
             background: #4682b4; color: white; 
-            box-shadow: 0 0 0 4px #000, 0 4px 0 #2c5c85; 
+            box-shadow: 0 0 0 4px #000, 0 4px 0 #2c5c85; /* 加入黑色外框 */
         }
 
         .btn-level-opt { 
-            width: 30%; 
-            min-width: 140px;
+            width: 48%; 
             margin: 5px 0; 
             padding: 15px 10px; 
             border: none; 
             border-radius: 25px; 
             cursor: pointer; 
             color: #fff; 
-            font-size: 18px; 
+            font-size: 20px; 
             font-weight: bold;
             box-shadow: 0 6px 0 rgba(0,0,0,0.2); 
             transition: all 0.2s;
@@ -84,15 +86,16 @@
             position: relative;
         }
         .btn-level-opt:active { transform: translateY(4px); box-shadow: 0 2px 0 rgba(0,0,0,0.2); }
-        .btn-level-opt .level-desc { display: block; font-size: 13px; opacity: 0.9; font-weight: normal; margin-top: 5px; }
+        .btn-level-opt .level-desc { display: block; font-size: 14px; opacity: 0.9; font-weight: normal; margin-top: 5px; }
         
         .color-yellow { background: #FFD54F; color: #5d4037; } 
         .color-blue { background: #4FC3F7; } 
         .color-purple { background: #9575CD; } 
         .color-orange { background: #FF8A65; } 
-        .color-red { background: #ef5350; }
 
+        /* --- 修改：Level按鈕選中狀態改為「黑色粗框」 --- */
         .btn-level-opt.active { 
+            /* 原本是 white，現在改為 black (#000) */
             box-shadow: 0 0 0 5px #000, 0 8px 15px rgba(0,0,0,0.3); 
             transform: scale(1.02); 
             z-index: 10; 
@@ -129,49 +132,16 @@
         @keyframes bounce { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
         @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-10px); } 75% { transform: translateX(10px); } }
 
-        .keyboard { background: #dceefc; padding: 2vh 2vw; border-radius: 20px; box-shadow: 0 1vh 0 #b0c4de; margin-bottom: 1vh; position: relative; display: flex; flex-direction: column; align-items: flex-start; width: fit-content; transition: opacity 0.5s; overflow: visible; }
+        .keyboard { background: #dceefc; padding: 2vh 2vw; border-radius: 20px; box-shadow: 0 1vh 0 #b0c4de; margin-bottom: 1vh; position: relative; display: flex; flex-direction: column; align-items: flex-start; width: fit-content; transition: opacity 0.5s; }
         .keyboard.hidden { display: none !important; } 
         .row { display: flex; justify-content: flex-start; margin-bottom: 1vh; gap: var(--key-gap); }
-        
-        /* 修改：鍵盤排版錯位修正 (針對第一排與第二排的關係) */
-        
-        /* Row 0 (數字): 設定左邊距為 1 個鍵寬 -> 讓 '1' 位於 'Q' (1.5寬) 的一半左上方 */
-        .row.r0 { margin-left: calc(var(--base-key-width) * 1); } 
-        
-        /* Row 1 (QWERTY): 保持 1.5 (模擬 Tab) -> Q 在 1.5 位置 */
-        .row.r1 { margin-left: calc(var(--base-key-width) * 1.5); } 
-        
-        /* Row 2 (ASDF): 保持 0 (Caps Lock 1.8 撐開) -> A 在 1.8 位置 */
-        .row.r2 { margin-left: 0; } 
-        
-        /* Row 3 (ZXCV): 保持 0 (Shift 2.3 撐開) -> Z 在 2.3 位置 */
-        .row.r3 { margin-left: 0; }
-        
-        .row.r4 { margin-left: calc(var(--base-key-width) * 4); }
-
-        .key { 
-            width: var(--base-key-width); height: var(--base-key-width); border-radius: 12%; 
-            display: flex; flex-direction: column; justify-content: center; align-items: center; 
-            box-shadow: 0 0.5vh 0 rgba(0,0,0,0.1); color: #444; transition: all 0.1s; 
-            border-bottom: 3px solid rgba(0,0,0,0.1); position: relative; z-index: 1; flex-shrink: 0; 
-            line-height: 1; 
-        }
-        
-        .key .shift-char { font-size: calc(var(--base-key-width) * 0.35); color: #666; font-weight: normal; margin-bottom: 2px; }
-        .key .main-char { font-size: calc(var(--base-key-width) * 0.45); font-weight: bold; }
-        .key.single { font-size: calc(var(--base-key-width) * 0.45); font-weight: bold; }
-        
-        .key.space { width: calc(var(--base-key-width) * 5); flex-direction: row; } 
-        .key.func { background-color: var(--c-func); flex-direction: row; font-size: calc(var(--base-key-width) * 0.35); font-weight: bold;}
-        
-        .key.caps { width: calc(var(--base-key-width) * 1.8); } 
-        .key.shift-l { width: calc(var(--base-key-width) * 2.3); } 
-        .key.shift-r { width: calc(var(--base-key-width) * 2.5); } 
-        
+        .row.r1 { margin-left: calc(var(--base-key-width) * 1.5); } .row.r2 { margin-left: 0; } .row.r3 { margin-left: 0; }
+        .key { width: var(--base-key-width); height: var(--base-key-width); border-radius: 12%; display: flex; align-items: center; justify-content: center; font-size: calc(var(--base-key-width) * 0.5); font-weight: bold; box-shadow: 0 0.5vh 0 rgba(0,0,0,0.1); color: #444; transition: all 0.1s; border-bottom: 3px solid rgba(0,0,0,0.1); position: relative; z-index: 1; flex-shrink: 0; }
+        .key.space { width: calc(var(--base-key-width) * 5); } 
+        .key.func { background-color: var(--c-func); font-size: calc(var(--base-key-width) * 0.35); }
+        .key.caps { width: calc(var(--base-key-width) * 1.75); } .key.shift-l { width: calc(var(--base-key-width) * 2.25); } .key.shift-r { width: calc(var(--base-key-width) * 2.5); } 
         .k-lp{background:var(--c-l-pinky)} .k-lr{background:var(--c-l-ring)} .k-lm{background:var(--c-l-middle)} .k-li{background:var(--c-l-index)} .k-ri{background:var(--c-r-index)} .k-rm{background:var(--c-r-middle)} .k-rr{background:var(--c-r-ring)} .k-rp{background:var(--c-r-pinky)}
-        
         .key.active { background-color: var(--highlight-color) !important; transform: translateY(0.5vh); border: 2px solid #ff8c00; border-bottom: none; color: black; z-index: 2; }
-        .key.active .shift-char { color: #333; }
         .key.caps.on { border: 2px solid #32cd32; box-shadow: 0 0 10px #32cd32; }
         
         #tracer { position: absolute; width: calc(var(--base-key-width) * 0.4); height: calc(var(--base-key-width) * 0.4); background: radial-gradient(circle, #fff 20%, #ffd700 100%); border-radius: 50%; pointer-events: none; opacity: 0; z-index: 1000; box-shadow: 0 0 15px #ffd700; top: 0; left: 0; will-change: transform, opacity; }
@@ -242,11 +212,11 @@
         <div style="margin-top: 20px; width: 100%;">
             <div class="input-group" style="margin: 0 auto 20px auto;">
                 <label class="input-label">學號 ( No.)：</label>
-                <input type="text" id="input-name" class="input-field" placeholder="例如:01" autocomplete="off">
+                <input type="text" id="input-name" class="input-field" placeholder="請輸入學號" autocomplete="off">
             </div>
             <div class="input-group" style="margin: 0 auto 20px auto;">
                 <label class="input-label">班別 (Class)：</label>
-                <input type="text" id="input-class" class="input-field" placeholder="例如: P1S" autocomplete="off">
+                <input type="text" id="input-class" class="input-field" placeholder="例如: 1A" autocomplete="off">
             </div>
             <button class="btn-next" onclick="enterSetup()">下一步 ➡️</button>
         </div>
@@ -275,13 +245,12 @@
         </div>
 
         <div class="section-box" style="background: transparent;">
-            <div class="section-title" style="font-size: 24px; color: #333;">👇 Step 2:Level  (選顏色) 👇</div>
+            <div class="section-title" style="font-size: 24px; color: #333;">👇 Step 2: 選顏色 (Level) 👇</div>
             <div class="option-group">
                 <button class="btn-level-opt color-yellow active" id="lvl-1" onclick="selectLevel(1)">Level 1<span class="level-desc">中間排 (黃)</span></button>
                 <button class="btn-level-opt color-blue" id="lvl-2" onclick="selectLevel(2)">Level 2<span class="level-desc">上排 (藍)</span></button>
                 <button class="btn-level-opt color-purple" id="lvl-3" onclick="selectLevel(3)">Level 3<span class="level-desc">下排 (紫)</span></button>
-                <button class="btn-level-opt color-orange" id="lvl-4" onclick="selectLevel(4)">Level 4<span class="level-desc">全字母 (橙)</span></button>
-                <button class="btn-level-opt color-red" id="lvl-5" onclick="selectLevel(5)">Level 5<span class="level-desc">數字符號 (紅)</span></button>
+                <button class="btn-level-opt color-orange" id="lvl-4" onclick="selectLevel(4)">Level 4<span class="level-desc">全鍵盤 (橙)</span></button>
             </div>
         </div>
 
@@ -310,39 +279,9 @@
         
         <div class="keyboard" id="keyboard-ui">
             <div id="tracer"></div>
-            <div class="row r0">
-                <div class="key k-lp" id="key-1"><span class="shift-char">!</span><span class="main-char">1</span></div>
-                <div class="key k-lr" id="key-2"><span class="shift-char">@</span><span class="main-char">2</span></div>
-                <div class="key k-lm" id="key-3"><span class="shift-char">#</span><span class="main-char">3</span></div>
-                <div class="key k-li" id="key-4"><span class="shift-char">$</span><span class="main-char">4</span></div>
-                <div class="key k-li" id="key-5"><span class="shift-char">%</span><span class="main-char">5</span></div>
-                <div class="key k-ri" id="key-6"><span class="shift-char">^</span><span class="main-char">6</span></div>
-                <div class="key k-ri" id="key-7"><span class="shift-char">&</span><span class="main-char">7</span></div>
-                <div class="key k-rm" id="key-8"><span class="shift-char">*</span><span class="main-char">8</span></div>
-                <div class="key k-rr" id="key-9"><span class="shift-char">(</span><span class="main-char">9</span></div>
-                <div class="key k-rp" id="key-0"><span class="shift-char">)</span><span class="main-char">0</span></div>
-                <div class="key k-rp" id="key-minus"><span class="shift-char">_</span><span class="main-char">-</span></div>
-                <div class="key k-rp" id="key-equal"><span class="shift-char">+</span><span class="main-char">=</span></div>
-            </div>
-            <div class="row r1">
-                <div class="key k-lp single" id="key-q">Q</div><div class="key k-lr single" id="key-w">W</div><div class="key k-lm single" id="key-e">E</div><div class="key k-li single" id="key-r">R</div><div class="key k-li single" id="key-t">T</div><div class="key k-ri single" id="key-y">Y</div><div class="key k-ri single" id="key-u">U</div><div class="key k-rm single" id="key-i">I</div><div class="key k-rr single" id="key-o">O</div><div class="key k-rp single" id="key-p">P</div>
-                <div class="key k-rp" id="key-bracket-l"><span class="shift-char">{</span><span class="main-char">[</span></div>
-                <div class="key k-rp" id="key-bracket-r"><span class="shift-char">}</span><span class="main-char">]</span></div>
-            </div>
-            <div class="row r2">
-                <div class="key func caps" id="key-capslock">Caps</div>
-                <div class="key k-lp single" id="key-a">A</div><div class="key k-lr single" id="key-s">S</div><div class="key k-lm single" id="key-d">D</div><div class="key k-li single" id="key-f">F</div><div class="key k-li single" id="key-g">G</div><div class="key k-ri single" id="key-h">H</div><div class="key k-ri single" id="key-j">J</div><div class="key k-rm single" id="key-k">K</div><div class="key k-rr single" id="key-l">L</div>
-                <div class="key k-rp" id="key-semicolon"><span class="shift-char">:</span><span class="main-char">;</span></div>
-                <div class="key k-rp" id="key-quote"><span class="shift-char">"</span><span class="main-char">'</span></div>
-            </div>
-            <div class="row r3">
-                <div class="key func shift-l" id="key-shift-l">Shift</div>
-                <div class="key k-lp single" id="key-z">Z</div><div class="key k-lr single" id="key-x">X</div><div class="key k-lm single" id="key-c">C</div><div class="key k-li single" id="key-v">V</div><div class="key k-li single" id="key-b">B</div><div class="key k-ri single" id="key-n">N</div><div class="key k-ri single" id="key-m">M</div>
-                <div class="key k-rm" id="key-comma"><span class="shift-char">&lt;</span><span class="main-char">,</span></div>
-                <div class="key k-rr" id="key-period"><span class="shift-char">&gt;</span><span class="main-char">.</span></div>
-                <div class="key k-rp" id="key-slash"><span class="shift-char">?</span><span class="main-char">/</span></div>
-                <div class="key func shift-r" id="key-shift-r">Shift</div>
-            </div>
+            <div class="row r1"><div class="key k-lp" id="key-q">Q</div><div class="key k-lr" id="key-w">W</div><div class="key k-lm" id="key-e">E</div><div class="key k-li" id="key-r">R</div><div class="key k-li" id="key-t">T</div><div class="key k-ri" id="key-y">Y</div><div class="key k-ri" id="key-u">U</div><div class="key k-rm" id="key-i">I</div><div class="key k-rr" id="key-o">O</div><div class="key k-rp" id="key-p">P</div></div>
+            <div class="row r2"><div class="key func caps" id="key-capslock">Caps</div><div class="key k-lp" id="key-a">A</div><div class="key k-lr" id="key-s">S</div><div class="key k-lm" id="key-d">D</div><div class="key k-li" id="key-f">F</div><div class="key k-li" id="key-g">G</div><div class="key k-ri" id="key-h">H</div><div class="key k-ri" id="key-j">J</div><div class="key k-rm" id="key-k">K</div><div class="key k-rr" id="key-l">L</div><div class="key k-rp" id="key-semicolon">;</div></div>
+            <div class="row r3"><div class="key func shift-l" id="key-shift-l">Shift</div><div class="key k-lp" id="key-z">Z</div><div class="key k-lr" id="key-x">X</div><div class="key k-lm" id="key-c">C</div><div class="key k-li" id="key-v">V</div><div class="key k-li" id="key-b">B</div><div class="key k-ri" id="key-n">N</div><div class="key k-ri" id="key-m">M</div><div class="key func shift-r" id="key-shift-r">Shift</div></div>
             <div class="row r4" style="margin-left: 4u;"><div class="key space" id="key-space"></div></div>
         </div>
         
@@ -375,7 +314,7 @@
             <h3>🔑 老師專用區</h3>
             <div class="admin-login-box">
                 <input type="email" id="admin-email" class="input-field" placeholder="Email" style="font-size: 16px; margin-bottom: 10px;">
-                <input type="password" id="admin-pwd" class="input-field" placeholder="密碼 (PW)" style="font-size: 16px;">
+                <input type="password" id="admin-pwd" class="input-field" placeholder="密碼 PW)" style="font-size: 16px;">
                 <button class="modal-btn btn-primary" style="width:100%" onclick="verifyAdmin()">登入</button>
                 <button class="modal-btn btn-neutral" style="width:100%" onclick="closeModal('admin-login-modal')">取消</button>
             </div>
@@ -403,8 +342,7 @@
                             <option value="1">Level 1 (中間排 - 隨機)</option>
                             <option value="2">Level 2 (上排 - 隨機)</option>
                             <option value="3">Level 3 (下排 - 隨機)</option>
-                            <option value="4">Level 4 (全字母 - 隨機)</option>
-                            <option value="5">Level 5 (數字符號 - 隨機)</option>
+                            <option value="4">Level 4 (全鍵盤 - 隨機)</option>
                             <option value="custom">自定內容 (固定文章)</option>
                         </select>
                     </div>
@@ -452,7 +390,6 @@
                         <option value="2">Lv.2</option>
                         <option value="3">Lv.3</option>
                         <option value="4">Lv.4</option>
-                        <option value="5">Lv.5</option>
                         <option value="Exam">Exam</option>
                     </select>
                     <input type="date" id="filter-date" class="filter-select" onchange="renderAdminPanel()">
@@ -618,34 +555,12 @@
     </script>
 
     <script>
-        // Level 4 全字母，Level 5 數字符號
-        const levels = { 
-            1:['a','s','d','f','g','h','j','k','l',';'], 
-            2:['q','w','e','r','t','y','u','i','o','p'], 
-            3:['z','x','c','v','b','n','m'], 
-            4:['q','w','e','r','t','y','u','i','o','p','a','s','d','f','g','h','j','k','l',';','z','x','c','v','b','n','m'],
-            5:['1','2','3','4','5','6','7','8','9','0','-','=','[',']',"'",',','.','/','!','@','#','$','%','^','&','*','(',')','_','+','{','}',':','"','<','>','?']
-        };
-        const homeRowMap = {'q':'a','w':'s','e':'d','r':'f','t':'f','y':'j','u':'j','i':'k','o':'l','p':';','z':'a','x':'s','c':'d','v':'f','b':'f','n':'j','m':'j','g':'f','h':'j','1':'a','2':'s','3':'d','4':'f','5':'f','6':'j','7':'j','8':'k','9':'l','0':';','-':';','=':';','[':';',']':';',"'":';',',':'k','.':'l','/':';'};
+        const levels = { 1:['a','s','d','f','g','h','j','k','l',';'], 2:['q','w','e','r','t','y','u','i','o','p'], 3:['z','x','c','v','b','n','m'], 4:['q','w','e','r','t','y','u','i','o','p','a','s','d','f','g','h','j','k','l',';','z','x','c','v','b','n','m'] };
+        const homeRowMap = {'q':'a','w':'s','e':'d','r':'f','t':'f','y':'j','u':'j','i':'k','o':'l','p':';','z':'a','x':'s','c':'d','v':'f','b':'f','n':'j','m':'j','g':'f','h':'j'};
+        const fingerMapping = {'l-pinky':['q','a','z'],'l-ring':['w','s','x'],'l-middle':['e','d','c'],'l-index':['r','f','v','t','g','b'],'r-index':['y','h','n','u','j','m'],'r-middle':['i','k'],'r-ring':['o','l'],'r-pinky':['p',';'],'l-thumb':[' '],'r-thumb':[' ']};
         
-        // 數字和符號的手指對應
-        const fingerMapping = {
-            'l-pinky':['q','a','z','1','!'],
-            'l-ring':['w','s','x','2','@'],
-            'l-middle':['e','d','c','3','#'],
-            'l-index':['r','f','v','t','g','b','4','$','5','%'],
-            'r-index':['y','h','n','u','j','m','6','^','7','&'],
-            'r-middle':['i','k','8','*',',','<'],
-            'r-ring':['o','l','9','(','.','>'],
-            'r-pinky':['p',';','0',')','-','_','=','+','[','{',']','}',"'",'"','/','?',':'],
-            'l-thumb':[' '],'r-thumb':[' ']
-        };
-        
-        // Shift 對應表 (符號 -> 基礎鍵)
-        const shiftMap = {'!':'1','@':'2','#':'3','$':'4','%':'5','^':'6','&':'7','*':'8','(':'9',')':'0','_':'-','+':'=','{':'[','}':']',':':';','"':"'",'<':',','>':'.','?':'/'};
-
-        // 左手負責的字母和符號集合 (包含數字和Shift符號)
-        const leftHandKeysSet = new Set(['q','w','e','r','t','a','s','d','f','g','z','x','c','v','b','1','2','3','4','5','!','@','#','$','%']);
+        // 增加：左手負責的字母集合 (用於判斷使用哪個 Shift 鍵)
+        const leftHandKeysSet = new Set(['q','w','e','r','t','a','s','d','f','g','z','x','c','v','b']);
 
         let currentUser = { name: '', classVal: '' };
         let selectedCaseMode = 'mixed';
@@ -654,13 +569,13 @@
         let timeLeft = 90;
         let currentTarget = '';
         let score = 0;
-        let mistakeCount = 0; 
+        let mistakeCount = 0; // 新增：錯字計數
         let isGameRunning = false;
         let isCapsLockOn = false; 
         let timerInterval = null;
         
         let isExamMode = false;
-        let isRandomExam = false; 
+        let isRandomExam = false; // 新增：是否為隨機出字考試模式
         let examContentArray = [];
         let examWordIndex = 0;
         let examCharIndex = 0;
@@ -697,12 +612,13 @@
                 examContentArray = content.trim().split(/\s+/); 
                 if(examContentArray.length === 0) examContentArray = ['Apple'];
                 
-                // 自定模式下，不進行任何預處理，保持原始大小寫
+                // 修改：自定模式下，不進行任何預處理，保持原始大小寫
+                // 且忽略 selectedCaseMode 的設定，直接使用原始文字
                 
                 examWordIndex = 0; examCharIndex = 0;
             } else {
                 isRandomExam = true;
-                selectedLevel = parseInt(mode); // 設定級別 Lv1-Lv5
+                selectedLevel = parseInt(mode); // 設定級別 Lv1-Lv4
             }
 
             const kb = document.getElementById('keyboard-ui');
@@ -723,21 +639,11 @@
             checkCapsLockState(new KeyboardEvent('keydown')); 
             nextChar(); 
 
-            // --- 💡 修改開始：優化計時器邏輯 (使用 Date.now()) ---
             if(timerInterval) clearInterval(timerInterval);
-            const endTime = Date.now() + selectedTime * 1000; // 計算結束時間
-            
             timerInterval = setInterval(() => {
-                const now = Date.now();
-                const remaining = Math.ceil((endTime - now) / 1000); // 計算剩餘秒數
-                timeLeft = remaining;
-                
-                if (timeLeft < 0) timeLeft = 0;
-                document.getElementById('timer').innerText = timeLeft;
-                
+                timeLeft--; document.getElementById('timer').innerText = timeLeft;
                 if (timeLeft <= 0) endGame();
-            }, 500); // 每0.5秒檢查一次，確保UI反應靈敏
-            // --- 💡 修改結束 ---
+            }, 1000);
         }
 
         function startGame() {
@@ -749,7 +655,7 @@
             document.getElementById('result-modal').style.display = 'none';
             document.getElementById('setup-screen').style.display = 'none';
             document.getElementById('game-screen').style.display = 'flex';
-            const titles = {1:"Level 1",2:"Level 2",3:"Level 3",4:"Level 4",5:"Level 5"};
+            const titles = {1:"Level 1",2:"Level 2",3:"Level 3",4:"Level 4"};
             document.getElementById('level-indicator').innerText = titles[selectedLevel];
             document.getElementById('player-display').innerText = `${currentUser.classVal} - ${currentUser.name}`;
             document.getElementById('timer').innerText = timeLeft;
@@ -757,28 +663,18 @@
             if (audioCtx.state === 'suspended') audioCtx.resume();
             checkCapsLockState(new KeyboardEvent('keydown')); 
             nextChar();
-            
-            // --- 💡 修改開始：優化計時器邏輯 (使用 Date.now()) ---
             if(timerInterval) clearInterval(timerInterval);
-            const endTime = Date.now() + selectedTime * 1000;
-            
             timerInterval = setInterval(() => {
-                const now = Date.now();
-                const remaining = Math.ceil((endTime - now) / 1000);
-                timeLeft = remaining;
-                
-                if (timeLeft < 0) timeLeft = 0;
-                document.getElementById('timer').innerText = timeLeft;
-                
+                timeLeft--; document.getElementById('timer').innerText = timeLeft;
                 if (timeLeft <= 0) endGame();
-            }, 500);
-            // --- 💡 修改結束 ---
+            }, 1000);
         }
 
         function endGame() {
             isGameRunning = false; clearInterval(timerInterval);
             const now = new Date();
             const dateStr = now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0');
+            // 修改：加入 mistakes 記錄到資料庫
             const record = { name: currentUser.name, class: currentUser.classVal, level: isExamMode ? "Exam" : selectedLevel, score: score, mistakes: mistakeCount, date: now.toLocaleString(), filterDate: dateStr };
             if(window.saveScoreToFirebase) window.saveScoreToFirebase(record);
             document.getElementById('final-score').innerText = score;
@@ -812,7 +708,7 @@
                 const chars = levels[selectedLevel];
                 let char = chars[Math.floor(Math.random() * chars.length)];
                 
-                // 大小寫邏輯
+                // 修改：大小寫邏輯
                 if (selectedCaseMode === 'mixed') {
                     // 原有的 mixed 是顯示大寫，但大小寫輸入皆可
                     char = char.toLowerCase();
@@ -862,49 +758,28 @@
 
             if (!currentTarget) return;
             const lowerChar = currentTarget.toLowerCase();
-            
-            // 判斷是否需要按 Shift (是大寫 或是 特殊符號)
-            let isShiftRequired = false;
-            if (shiftMap[currentTarget]) {
-                isShiftRequired = true; // 是符號，需要 Shift
-            } else if (currentTarget !== lowerChar && currentTarget !== ';') {
-                isShiftRequired = true; // 是大寫字母，需要 Shift
-            }
+            let isUpper = (currentTarget !== lowerChar) && (currentTarget !== ';') && (currentTarget !== ' ');
             
             // 原有 mixed 邏輯：不視為強制大寫 (適用於練習模式 及 隨機考試模式)
-            if ((!isExamMode || isRandomExam) && selectedCaseMode === 'mixed') isShiftRequired = false;
+            if ((!isExamMode || isRandomExam) && selectedCaseMode === 'mixed') isUpper = false;
 
             document.querySelectorAll('.key').forEach(k => k.classList.remove('active'));
             document.querySelectorAll('.finger').forEach(f => f.classList.remove('active'));
             const tracer = document.getElementById('tracer');
             tracer.classList.remove('animating');
 
-            // 取得按鍵的基礎ID (例如 ! 的基礎是 1)
-            let baseKeyChar = shiftMap[currentTarget] || lowerChar;
-            let tid = 'key-' + baseKeyChar; 
-            if(baseKeyChar===';') tid = 'key-semicolon'; 
-            if(baseKeyChar===' ') tid = 'key-space';
-            if(baseKeyChar==='-') tid = 'key-minus';
-            if(baseKeyChar==='=') tid = 'key-equal';
-            if(baseKeyChar==='[') tid = 'key-bracket-l';
-            if(baseKeyChar===']') tid = 'key-bracket-r';
-            if(baseKeyChar==="'") tid = 'key-quote';
-            if(baseKeyChar===',') tid = 'key-comma';
-            if(baseKeyChar==='.') tid = 'key-period';
-            if(baseKeyChar==='/') tid = 'key-slash';
-
+            let tid = 'key-' + lowerChar; if(lowerChar===';') tid = 'key-semicolon'; if(lowerChar===' ') tid = 'key-space';
             const targetEl = document.getElementById(tid);
             const capsEl = document.getElementById('key-capslock');
 
             // --- strict-mixed 處理邏輯 (雙手 Shift 分工) ---
-            // 包含符號的處理
-            if ((selectedCaseMode === 'strict-mixed' && isShiftRequired) || (isExamMode && !isRandomExam && isShiftRequired) || (selectedLevel === 5 && isShiftRequired)) {
+            if (selectedCaseMode === 'strict-mixed' && isUpper) {
                 if(targetEl) {
-                    targetEl.classList.add('active'); // 高亮字母/數字鍵
-                    startTracer(baseKeyChar, targetEl);
+                    targetEl.classList.add('active'); // 高亮字母鍵
+                    startTracer(lowerChar, targetEl);
                 }
 
-                if (leftHandKeysSet.has(baseKeyChar)) {
+                if (leftHandKeysSet.has(lowerChar)) {
                     document.getElementById('key-shift-r').classList.add('active');
                     document.getElementById('r-pinky').classList.add('active');
                 } else {
@@ -912,22 +787,23 @@
                     document.getElementById('l-pinky').classList.add('active');
                 }
                 
-                highlightFinger(baseKeyChar);
+                highlightFinger(lowerChar);
                 return; 
             }
             // --------------------------------------------------
 
-            // 判斷是否需要高亮 (如果不需要 Shift)
-            if(!isShiftRequired) {
+            // 判斷是否需要高亮 (如果不是大寫，或者是在自定考試模式下且輸入正確的字符)
+            // 修改邏輯：如果不是大寫，或者 (是固定內容考試 且 當前目標是小寫)
+            if(!isUpper || (isExamMode && !isRandomExam && currentTarget === lowerChar)) {
                 if(targetEl) { 
                     targetEl.classList.add('active'); 
-                    if (lowerChar !== ' ') { startTracer(baseKeyChar, targetEl); highlightFinger(baseKeyChar); } 
+                    if (lowerChar !== ' ') { startTracer(lowerChar, targetEl); highlightFinger(lowerChar); } 
                     else { document.getElementById('l-thumb').classList.add('active'); document.getElementById('r-thumb').classList.add('active'); }
                 }
                 return;
             }
 
-            if(isShiftRequired && !shiftMap[currentTarget]) { // 僅大寫字母 (非符號)
+            if(isUpper) {
                 if(isCapsLockOn) { if(targetEl) { targetEl.classList.add('active'); startTracer(lowerChar, targetEl); highlightFinger(lowerChar); } } 
                 else { if(capsEl) { capsEl.classList.add('active'); document.getElementById('l-pinky').classList.add('active'); startTracer('capslock', capsEl); } }
                 return;
@@ -940,13 +816,8 @@
             const tracer = document.getElementById('tracer');
             if(!tracer) return;
 
-            let homeChar = homeRowMap[char]; 
-            if(char==='capslock') homeChar='a'; 
-            if(!homeChar) return; 
-            if(homeChar===char) return; 
-
-            let hid = 'key-'+homeChar; 
-            if(homeChar===';') hid='key-semicolon';
+            let homeChar = homeRowMap[char]; if(char==='capslock') homeChar='a'; if(!homeChar || homeChar===char) return;
+            let hid = 'key-'+homeChar; if(homeChar===';') hid='key-semicolon';
             const home = document.getElementById(hid);
             const kb = document.getElementById('keyboard-ui');
 
@@ -972,23 +843,19 @@
         }
 
         async function showLeaderboard() {
-            const tbody = document.getElementById('lb-body'); 
-            tbody.innerHTML = '<tr><td colspan="6">載入中...</td></tr>';
+            const tbody = document.getElementById('lb-body'); tbody.innerHTML = '<tr><td colspan="5">載入中...</td></tr>';
             document.getElementById('leaderboard-modal').style.display = 'flex';
             if(window.fetchLeaderboard) {
                 const records = await window.fetchLeaderboard();
-                
-                // --- 💡 修改開始：優化渲染效能 (使用 map + join) ---
-                if(records.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="6">暫無紀錄</td></tr>';
-                } else {
-                    tbody.innerHTML = records.map((rec, index) => {
-                        let rankHTML = index+1; 
-                        if(index==0) rankHTML='🥇'; else if(index==1) rankHTML='🥈'; else if(index==2) rankHTML='🥉';
-                        return `<tr><td>${rankHTML}</td><td>${rec.name}</td><td>${rec.class}</td><td>${rec.level==='Exam'?'📝':('Lv.'+rec.level)}</td><td style="font-weight:bold;">${rec.score}</td><td>${rec.mistakes || 0}</td></tr>`;
-                    }).join('');
+                tbody.innerHTML = '';
+                if(records.length === 0) tbody.innerHTML = '<tr><td colspan="6">暫無紀錄</td></tr>';
+                else {
+                    records.forEach((rec, index) => {
+                        let rankHTML = index+1; if(index==0) rankHTML='🥇'; else if(index==1) rankHTML='🥈'; else if(index==2) rankHTML='🥉';
+                        // 修改：增加錯字欄位顯示
+                        tbody.innerHTML += `<tr><td>${rankHTML}</td><td>${rec.name}</td><td>${rec.class}</td><td>${rec.level==='Exam'?'📝':('Lv.'+rec.level)}</td><td style="font-weight:bold;">${rec.score}</td><td>${rec.mistakes || 0}</td></tr>`;
+                    });
                 }
-                // --- 💡 修改結束 ---
             }
         }
 
@@ -1005,7 +872,7 @@
 
         function renderAdminPanel() {
             const tbody = document.getElementById('admin-lb-body'); 
-            
+            tbody.innerHTML = '';
             let records = window.getAllRecords(); 
             
             const fClass = document.getElementById('filter-class').value;
@@ -1019,25 +886,16 @@
                 return true;
             });
 
+            // 修改排序邏輯：按分數從高到低排
             records.sort((a, b) => (b.score || 0) - (a.score || 0));
 
-            // --- 💡 修改開始：優化渲染效能 (使用 map + join) ---
-            if(records.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="7">無資料</td></tr>';
-            } else {
-                tbody.innerHTML = records.map(rec => `
-                    <tr>
-                        <td><input type="checkbox" class="del-chk" data-id="${rec.id}"></td>
-                        <td>${rec.class}</td>
-                        <td>${rec.name}</td>
-                        <td>${rec.level}</td>
-                        <td>${rec.score}</td>
-                        <td>${rec.mistakes || 0}</td>
-                        <td style="font-size:12px;">${rec.date}</td>
-                    </tr>
-                `).join('');
+            if(records.length===0) tbody.innerHTML = '<tr><td colspan="7">無資料</td></tr>';
+            else {
+                records.forEach(rec => {
+                    // 修改：增加錯字欄位顯示
+                    tbody.innerHTML += `<tr><td><input type="checkbox" class="del-chk" data-id="${rec.id}"></td><td>${rec.class}</td><td>${rec.name}</td><td>${rec.level}</td><td>${rec.score}</td><td>${rec.mistakes || 0}</td><td style="font-size:12px;">${rec.date}</td></tr>`; 
+                });
             }
-            // --- 💡 修改結束 ---
         }
 
         function resetFilters() { document.getElementById('filter-class').value=""; document.getElementById('filter-level').value=""; document.getElementById('filter-date').value=""; renderAdminPanel(); }
@@ -1079,17 +937,18 @@
             link.download = "成績.csv"; link.click();
         }
 
+        // 修改：loadExamPreset 現在負責控制輸入框 和 字母樣子選擇 的顯示/隱藏
         function loadExamPreset() {
             const lvl = document.getElementById('admin-exam-preset').value; 
             const contentWrapper = document.getElementById('admin-content-wrapper');
             const caseWrapper = document.getElementById('admin-casemode-wrapper');
             
             if (lvl === 'custom') {
-                contentWrapper.style.display = 'block'; 
-                caseWrapper.style.display = 'none'; 
+                contentWrapper.style.display = 'block'; // 顯示輸入框
+                caseWrapper.style.display = 'none'; // 隱藏字母樣子 (強制原始)
             } else {
-                contentWrapper.style.display = 'none'; 
-                caseWrapper.style.display = 'flex'; 
+                contentWrapper.style.display = 'none'; // 隱藏輸入框
+                caseWrapper.style.display = 'flex'; // 顯示字母樣子
             }
         }
 
@@ -1101,7 +960,7 @@
                 noHints: document.getElementById('admin-exam-nohints').checked,
                 noKeyboard: document.getElementById('admin-exam-nokeyboard').checked,
                 caseMode: document.getElementById('admin-exam-casemode').value,
-                levelMode: document.getElementById('admin-exam-preset').value 
+                levelMode: document.getElementById('admin-exam-preset').value // 儲存選擇的出題模式 (Lv1-4 or Custom)
             };
             if(window.saveExamConfigToFirebase) window.saveExamConfigToFirebase(config);
         }
@@ -1122,19 +981,12 @@
             ['mixed','upper','lower','strict-mixed'].forEach(id=>document.getElementById('opt-'+id).classList.remove('active')); 
             document.getElementById('opt-'+m).classList.add('active'); 
         }
-        function selectLevel(l) { selectedLevel = l; [1,2,3,4,5].forEach(i=>document.getElementById('lvl-'+i).classList.remove('active')); document.getElementById('lvl-'+l).classList.add('active'); }
+        function selectLevel(l) { selectedLevel = l; [1,2,3,4].forEach(i=>document.getElementById('lvl-'+i).classList.remove('active')); document.getElementById('lvl-'+l).classList.add('active'); }
         function selectTime(t) { selectedTime = t; [30,60,90,120].forEach(i=>document.getElementById('time-'+i).classList.remove('active')); document.getElementById('time-'+t).classList.add('active'); }
         function highlightFinger(char) {
             const config = window.getExamConfig ? window.getExamConfig() : {};
             if (isExamMode && config.noHints) return;
-            
-            // 處理 Shift 符號轉回基礎鍵 (例如 ! 轉回 1)
-            let checkChar = shiftMap[char] || char;
-
-            let fid = null; 
-            for(const [id, keys] of Object.entries(fingerMapping)) { 
-                if(keys.includes(checkChar)) { fid=id; break; } 
-            }
+            let fid = null; for(const [id, keys] of Object.entries(fingerMapping)) { if(keys.includes(char)) { fid=id; break; } }
             if(fid) document.getElementById(fid).classList.add('active');
         }
         function updateScore() { document.getElementById('score').innerText = score; }
@@ -1177,6 +1029,7 @@
                     document.getElementById('target-char').classList.add('bounce'); setTimeout(nextChar, 200); 
                 }
             } else {
+                // 修改：打錯不扣分，只增加錯字計數
                 mistakeCount++;
                 const shakeEl = (isExamMode && !isRandomExam) ? document.querySelector('.target-display') : document.getElementById('target-char');
                 shakeEl.classList.remove('shake'); void shakeEl.offsetWidth; shakeEl.classList.add('shake');
