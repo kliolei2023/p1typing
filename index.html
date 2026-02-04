@@ -327,6 +327,7 @@
             
             <div class="admin-tabs">
                 <button class="tab-btn active" onclick="switchAdminTab('exam')">📝 考試設定</button>
+                <button class="tab-btn" onclick="switchAdminTab('practice')">🎮 練習板面控制</button>
                 <button class="tab-btn" onclick="switchAdminTab('score')">📊 成績管理</button>
             </div>
 
@@ -377,6 +378,23 @@
                         <label class="toggle-label" style="margin-left: 15px;"><input type="checkbox" id="admin-exam-nokeyboard"> 關閉鍵盤</label>
                     </div>
                     <button class="modal-btn btn-primary" style="width:100%; margin-top:10px; font-size: 18px;" onclick="saveExamSettings()">💾 儲存並生效</button>
+                </div>
+            </div>
+
+            <div id="tab-practice" class="tab-content">
+                <div class="exam-settings-box">
+                    <p style="font-size:16px; color:#555; margin-bottom:15px;">控制學生在「練習模式」時的輔助功能：</p>
+                    <div class="setting-row">
+                        <label class="toggle-label">
+                            <input type="checkbox" id="admin-practice-nohints"> 關閉練習時打字的提示 (手部及鍵盤顏色)
+                        </label>
+                    </div>
+                    <div class="setting-row">
+                        <label class="toggle-label">
+                            <input type="checkbox" id="admin-practice-nokeyboard"> 關閉練習時打字的鍵盤 (隱藏虛擬鍵盤)
+                        </label>
+                    </div>
+                    <button class="modal-btn btn-primary" style="width:100%; margin-top:20px; font-size: 18px;" onclick="savePracticeSettings()">💾 儲存練習設定</button>
                 </div>
             </div>
 
@@ -442,6 +460,7 @@
         // Global
         let allRecords = [];
         let examConfig = { isActive: false, content: "", time: 90, noHints: false, noKeyboard: false, caseMode: "mixed", levelMode: "custom" };
+        let practiceConfig = { noHints: false, noKeyboard: false };
 
         // --- Auth Functions ---
         window.verifyAdmin = async function() {
@@ -528,6 +547,17 @@
                 return examConfig;
             } catch (e) { console.error(e); return { isActive: false }; }
         };
+        
+        // 新增：讀取練習設定
+        window.fetchPracticeConfig = async function() {
+            try {
+                const docRef = doc(db, "settings", "practiceConfig");
+                const docSnap = await getDoc(docRef);
+                if (docSnap.exists()) practiceConfig = docSnap.data();
+                else practiceConfig = { noHints: false, noKeyboard: false };
+                return practiceConfig;
+            } catch (e) { console.error(e); return { noHints: false, noKeyboard: false }; }
+        };
 
         window.saveExamConfigToFirebase = async function(config) {
             try {
@@ -535,10 +565,20 @@
                 examConfig = config; alert("考試設定已儲存！");
             } catch (e) { console.error(e); alert("儲存失敗"); }
         };
+        
+        // 新增：儲存練習設定
+        window.savePracticeConfigToFirebase = async function(config) {
+            try {
+                await setDoc(doc(db, "settings", "practiceConfig"), config);
+                practiceConfig = config; alert("練習設定已儲存！");
+            } catch (e) { console.error(e); alert("儲存失敗"); }
+        };
 
         fetchExamConfig().then(cfg => console.log("Config loaded"));
+        fetchPracticeConfig().then(cfg => console.log("Practice Config loaded"));
 
         window.getExamConfig = () => examConfig;
+        window.getPracticeConfig = () => practiceConfig;
         window.getAllRecords = () => allRecords;
         window.refreshAdminData = fetchAllScores;
         window.loadAdminSettingsUI = () => {
@@ -550,6 +590,11 @@
             document.getElementById('admin-exam-nokeyboard').checked = c.noKeyboard||false;
             document.getElementById('admin-exam-casemode').value = c.caseMode || "mixed";
             document.getElementById('admin-exam-preset').value = c.levelMode || "custom";
+            
+            const p = practiceConfig;
+            document.getElementById('admin-practice-nohints').checked = p.noHints || false;
+            document.getElementById('admin-practice-nokeyboard').checked = p.noKeyboard || false;
+            
             window.loadExamPreset(); // 初始化顯示狀態
         };
     </script>
@@ -649,9 +694,21 @@
         function startGame() {
             isExamMode = false;
             isRandomExam = false;
+            
+            // 讀取練習模式設定
+            const pConfig = window.getPracticeConfig ? window.getPracticeConfig() : {};
+            const kb = document.getElementById('keyboard-ui');
+            const hands = document.getElementById('hands-ui');
+            
+            if (pConfig.noKeyboard) { 
+                kb.classList.add('hidden'); 
+                hands.classList.add('hidden'); 
+            } else { 
+                kb.classList.remove('hidden'); 
+                hands.classList.remove('hidden'); 
+            }
+
             score = 0; mistakeCount = 0; timeLeft = selectedTime; isGameRunning = true;
-            document.getElementById('keyboard-ui').classList.remove('hidden');
-            document.getElementById('hands-ui').classList.remove('hidden');
             document.getElementById('result-modal').style.display = 'none';
             document.getElementById('setup-screen').style.display = 'none';
             document.getElementById('game-screen').style.display = 'flex';
@@ -748,7 +805,17 @@
 
         function highlightInterface() {
             const config = window.getExamConfig ? window.getExamConfig() : {};
-            if (isExamMode && (config.noHints || config.noKeyboard)) {
+            const pConfig = window.getPracticeConfig ? window.getPracticeConfig() : {};
+            
+            // 邏輯：如果是考試模式，檢查考試的 noHints；如果不是考試模式，檢查練習的 noHints
+            let hideHints = false;
+            if (isExamMode) {
+                if (config.noHints || config.noKeyboard) hideHints = true;
+            } else {
+                if (pConfig.noHints || pConfig.noKeyboard) hideHints = true;
+            }
+
+            if (hideHints) {
                 document.querySelectorAll('.key').forEach(k => k.classList.remove('active'));
                 document.querySelectorAll('.finger').forEach(f => f.classList.remove('active'));
                 const tracer = document.getElementById('tracer');
@@ -812,7 +879,17 @@
 
         function startTracer(char, el) {
             const config = window.getExamConfig ? window.getExamConfig() : {};
-            if (isExamMode && (config.noHints || config.noKeyboard)) return;
+            const pConfig = window.getPracticeConfig ? window.getPracticeConfig() : {};
+            
+            let hideHints = false;
+            if (isExamMode) {
+                if (config.noHints || config.noKeyboard) hideHints = true;
+            } else {
+                if (pConfig.noHints || pConfig.noKeyboard) hideHints = true;
+            }
+            
+            if (hideHints) return;
+            
             const tracer = document.getElementById('tracer');
             if(!tracer) return;
 
@@ -964,12 +1041,25 @@
             };
             if(window.saveExamConfigToFirebase) window.saveExamConfigToFirebase(config);
         }
+        
+        // 新增：儲存練習設定函式
+        function savePracticeSettings() {
+            const config = {
+                noHints: document.getElementById('admin-practice-nohints').checked,
+                noKeyboard: document.getElementById('admin-practice-nokeyboard').checked
+            };
+            if(window.savePracticeConfigToFirebase) window.savePracticeConfigToFirebase(config);
+        }
+
         function switchAdminTab(tab) {
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
             if(tab === 'exam') {
                 document.querySelector('button[onclick="switchAdminTab(\'exam\')"]').classList.add('active');
                 document.getElementById('tab-exam').classList.add('active');
+            } else if (tab === 'practice') {
+                document.querySelector('button[onclick="switchAdminTab(\'practice\')"]').classList.add('active');
+                document.getElementById('tab-practice').classList.add('active');
             } else {
                 document.querySelector('button[onclick="switchAdminTab(\'score\')"]').classList.add('active');
                 document.getElementById('tab-score').classList.add('active');
@@ -983,9 +1073,18 @@
         }
         function selectLevel(l) { selectedLevel = l; [1,2,3,4].forEach(i=>document.getElementById('lvl-'+i).classList.remove('active')); document.getElementById('lvl-'+l).classList.add('active'); }
         function selectTime(t) { selectedTime = t; [30,60,90,120].forEach(i=>document.getElementById('time-'+i).classList.remove('active')); document.getElementById('time-'+t).classList.add('active'); }
+        
         function highlightFinger(char) {
             const config = window.getExamConfig ? window.getExamConfig() : {};
-            if (isExamMode && config.noHints) return;
+            const pConfig = window.getPracticeConfig ? window.getPracticeConfig() : {};
+            
+            // 檢查是否隱藏提示
+            let hideHints = false;
+            if (isExamMode) { if (config.noHints) hideHints = true; } 
+            else { if (pConfig.noHints) hideHints = true; }
+            
+            if (hideHints) return;
+            
             let fid = null; for(const [id, keys] of Object.entries(fingerMapping)) { if(keys.includes(char)) { fid=id; break; } }
             if(fid) document.getElementById(fid).classList.add('active');
         }
