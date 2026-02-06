@@ -322,7 +322,7 @@
     </div>
 
     <div id="admin-panel-modal" class="modal-overlay">
-        <div class="modal-content" style="width: 750px; max-width: 95%;">
+        <div class="modal-content" style="width: 850px; max-width: 95%;">
             <h2 style="color: #4682b4; margin-top:0;">⚙️ 後台管理</h2>
             
             <div class="admin-tabs">
@@ -402,6 +402,7 @@
                 <div class="admin-filter-bar">
                     <span>🔍 篩選：</span>
                     <select id="filter-class" class="filter-select" onchange="renderAdminPanel()"><option value="">所有班別</option></select>
+                    
                     <select id="filter-level" class="filter-select" onchange="renderAdminPanel()">
                         <option value="">所有級別</option>
                         <option value="1">Lv.1</option>
@@ -410,6 +411,23 @@
                         <option value="4">Lv.4</option>
                         <option value="Exam">Exam</option>
                     </select>
+
+                    <select id="filter-casemode" class="filter-select" onchange="renderAdminPanel()">
+                         <option value="">所有樣子</option>
+                         <option value="mixed">大小皆可</option>
+                         <option value="upper">僅大寫</option>
+                         <option value="lower">僅小寫</option>
+                         <option value="strict-mixed">混合打</option>
+                    </select>
+
+                    <select id="filter-time" class="filter-select" onchange="renderAdminPanel()">
+                        <option value="">所有時間</option>
+                        <option value="30">30秒</option>
+                        <option value="60">60秒</option>
+                        <option value="90">90秒</option>
+                        <option value="120">120秒</option>
+                   </select>
+
                     <input type="date" id="filter-date" class="filter-select" onchange="renderAdminPanel()">
                     <button class="modal-btn btn-neutral" style="font-size:12px; padding: 5px 10px;" onclick="resetFilters()">重置</button>
                 </div>
@@ -423,7 +441,7 @@
 
                 <div style="max-height: 300px; overflow-y: auto; border: 1px solid #eee; border-radius: 10px;">
                     <table class="lb-table">
-                        <thead><tr><th style="width: 40px;"><input type="checkbox" onchange="toggleAll(this)"></th><th>班別</th><th>姓名</th><th>級別</th><th>分數</th><th>錯字</th><th>日期</th></tr></thead>
+                        <thead><tr><th style="width: 40px;"><input type="checkbox" onchange="toggleAll(this)"></th><th>班別</th><th>姓名</th><th>級別</th><th>模式</th><th>時間</th><th>分數</th><th>錯字</th><th>日期</th></tr></thead>
                         <tbody id="admin-lb-body"></tbody>
                     </table>
                 </div>
@@ -497,7 +515,6 @@
 
         window.fetchLeaderboard = async function() {
             try {
-                // 修改：移除了 limit(50)，現在會抓取所有資料
                 const q = query(collection(db, "scores"), orderBy("score", "desc"));
                 const querySnapshot = await getDocs(q);
                 let records = [];
@@ -548,7 +565,6 @@
             } catch (e) { console.error(e); return { isActive: false }; }
         };
         
-        // 新增：讀取練習設定
         window.fetchPracticeConfig = async function() {
             try {
                 const docRef = doc(db, "settings", "practiceConfig");
@@ -566,7 +582,6 @@
             } catch (e) { console.error(e); alert("儲存失敗"); }
         };
         
-        // 新增：儲存練習設定
         window.savePracticeConfigToFirebase = async function(config) {
             try {
                 await setDoc(doc(db, "settings", "practiceConfig"), config);
@@ -595,7 +610,7 @@
             document.getElementById('admin-practice-nohints').checked = p.noHints || false;
             document.getElementById('admin-practice-nokeyboard').checked = p.noKeyboard || false;
             
-            window.loadExamPreset(); // 初始化顯示狀態
+            window.loadExamPreset(); 
         };
     </script>
 
@@ -604,7 +619,6 @@
         const homeRowMap = {'q':'a','w':'s','e':'d','r':'f','t':'f','y':'j','u':'j','i':'k','o':'l','p':';','z':'a','x':'s','c':'d','v':'f','b':'f','n':'j','m':'j','g':'f','h':'j'};
         const fingerMapping = {'l-pinky':['q','a','z'],'l-ring':['w','s','x'],'l-middle':['e','d','c'],'l-index':['r','f','v','t','g','b'],'r-index':['y','h','n','u','j','m'],'r-middle':['i','k'],'r-ring':['o','l'],'r-pinky':['p',';'],'l-thumb':[' '],'r-thumb':[' ']};
         
-        // 增加：左手負責的字母集合 (用於判斷使用哪個 Shift 鍵)
         const leftHandKeysSet = new Set(['q','w','e','r','t','a','s','d','f','g','z','x','c','v','b']);
 
         let currentUser = { name: '', classVal: '' };
@@ -614,13 +628,13 @@
         let timeLeft = 90;
         let currentTarget = '';
         let score = 0;
-        let mistakeCount = 0; // 新增：錯字計數
+        let mistakeCount = 0; 
         let isGameRunning = false;
         let isCapsLockOn = false; 
         let timerInterval = null;
         
         let isExamMode = false;
-        let isRandomExam = false; // 新增：是否為隨機出字考試模式
+        let isRandomExam = false; 
         let examContentArray = [];
         let examWordIndex = 0;
         let examCharIndex = 0;
@@ -648,7 +662,6 @@
             selectedTime = parseInt(config.time);
             selectedCaseMode = config.caseMode || 'mixed';
             
-            // 判斷是否為隨機出題模式
             const mode = config.levelMode || 'custom';
             
             if (mode === 'custom') {
@@ -657,13 +670,10 @@
                 examContentArray = content.trim().split(/\s+/); 
                 if(examContentArray.length === 0) examContentArray = ['Apple'];
                 
-                // 修改：自定模式下，不進行任何預處理，保持原始大小寫
-                // 且忽略 selectedCaseMode 的設定，直接使用原始文字
-                
                 examWordIndex = 0; examCharIndex = 0;
             } else {
                 isRandomExam = true;
-                selectedLevel = parseInt(mode); // 設定級別 Lv1-Lv4
+                selectedLevel = parseInt(mode); 
             }
 
             const kb = document.getElementById('keyboard-ui');
@@ -695,7 +705,6 @@
             isExamMode = false;
             isRandomExam = false;
             
-            // 讀取練習模式設定
             const pConfig = window.getPracticeConfig ? window.getPracticeConfig() : {};
             const kb = document.getElementById('keyboard-ui');
             const hands = document.getElementById('hands-ui');
@@ -731,8 +740,20 @@
             isGameRunning = false; clearInterval(timerInterval);
             const now = new Date();
             const dateStr = now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0');
-            // 修改：加入 mistakes 記錄到資料庫
-            const record = { name: currentUser.name, class: currentUser.classVal, level: isExamMode ? "Exam" : selectedLevel, score: score, mistakes: mistakeCount, date: now.toLocaleString(), filterDate: dateStr };
+            
+            // --- 修改：新增 caseMode 和 timeMode 記錄 ---
+            const record = { 
+                name: currentUser.name, 
+                class: currentUser.classVal, 
+                level: isExamMode ? "Exam" : selectedLevel, 
+                score: score, 
+                mistakes: mistakeCount, 
+                caseMode: isExamMode ? 'Exam' : selectedCaseMode, // 記錄字母樣子
+                timeMode: selectedTime,  // 記錄時間
+                date: now.toLocaleString(), 
+                filterDate: dateStr 
+            };
+            
             if(window.saveScoreToFirebase) window.saveScoreToFirebase(record);
             document.getElementById('final-score').innerText = score;
             document.getElementById('result-modal').style.display = 'flex';
@@ -749,7 +770,6 @@
         function nextChar() {
             if (!isGameRunning) return;
             
-            // 如果是考試模式，且不是隨機出字 (即自定內容模式)
             if (isExamMode && !isRandomExam) {
                 if (examWordIndex >= examContentArray.length) examWordIndex = 0;
                 let currentWord = examContentArray[examWordIndex];
@@ -761,17 +781,13 @@
                 currentTarget = currentWord[examCharIndex];
                 updateExamDisplay(currentWord, examCharIndex);
             } else {
-                // 練習模式 OR 隨機出字的考試模式
                 const chars = levels[selectedLevel];
                 let char = chars[Math.floor(Math.random() * chars.length)];
                 
-                // 修改：大小寫邏輯
                 if (selectedCaseMode === 'mixed') {
-                    // 原有的 mixed 是顯示大寫，但大小寫輸入皆可
                     char = char.toLowerCase();
-                    currentTarget = char; // 邏輯上存小寫，但顯示大寫
+                    currentTarget = char; 
                 } else if (selectedCaseMode === 'strict-mixed') {
-                    // 新增模式：隨機大寫或小寫
                     const isUpper = Math.random() < 0.5;
                     currentTarget = isUpper ? char.toUpperCase() : char.toLowerCase();
                 } else if (selectedCaseMode === 'upper') {
@@ -783,7 +799,6 @@
                 }
                 
                 const display = document.getElementById('target-char');
-                // 原有 mixed 顯示大寫
                 if (selectedCaseMode === 'mixed') display.innerText = char.toUpperCase();
                 else display.innerText = currentTarget;
             }
@@ -807,7 +822,6 @@
             const config = window.getExamConfig ? window.getExamConfig() : {};
             const pConfig = window.getPracticeConfig ? window.getPracticeConfig() : {};
             
-            // 邏輯：如果是考試模式，檢查考試的 noHints；如果不是考試模式，檢查練習的 noHints
             let hideHints = false;
             if (isExamMode) {
                 if (config.noHints || config.noKeyboard) hideHints = true;
@@ -827,7 +841,6 @@
             const lowerChar = currentTarget.toLowerCase();
             let isUpper = (currentTarget !== lowerChar) && (currentTarget !== ';') && (currentTarget !== ' ');
             
-            // 原有 mixed 邏輯：不視為強制大寫 (適用於練習模式 及 隨機考試模式)
             if ((!isExamMode || isRandomExam) && selectedCaseMode === 'mixed') isUpper = false;
 
             document.querySelectorAll('.key').forEach(k => k.classList.remove('active'));
@@ -839,10 +852,9 @@
             const targetEl = document.getElementById(tid);
             const capsEl = document.getElementById('key-capslock');
 
-            // --- strict-mixed 處理邏輯 (雙手 Shift 分工) ---
             if (selectedCaseMode === 'strict-mixed' && isUpper) {
                 if(targetEl) {
-                    targetEl.classList.add('active'); // 高亮字母鍵
+                    targetEl.classList.add('active'); 
                     startTracer(lowerChar, targetEl);
                 }
 
@@ -857,10 +869,7 @@
                 highlightFinger(lowerChar);
                 return; 
             }
-            // --------------------------------------------------
 
-            // 判斷是否需要高亮 (如果不是大寫，或者是在自定考試模式下且輸入正確的字符)
-            // 修改邏輯：如果不是大寫，或者 (是固定內容考試 且 當前目標是小寫)
             if(!isUpper || (isExamMode && !isRandomExam && currentTarget === lowerChar)) {
                 if(targetEl) { 
                     targetEl.classList.add('active'); 
@@ -929,7 +938,6 @@
                 else {
                     records.forEach((rec, index) => {
                         let rankHTML = index+1; if(index==0) rankHTML='🥇'; else if(index==1) rankHTML='🥈'; else if(index==2) rankHTML='🥉';
-                        // 修改：增加錯字欄位顯示
                         tbody.innerHTML += `<tr><td>${rankHTML}</td><td>${rec.name}</td><td>${rec.class}</td><td>${rec.level==='Exam'?'📝':('Lv.'+rec.level)}</td><td style="font-weight:bold;">${rec.score}</td><td>${rec.mistakes || 0}</td></tr>`;
                     });
                 }
@@ -955,27 +963,43 @@
             const fClass = document.getElementById('filter-class').value;
             const fLevel = document.getElementById('filter-level').value;
             const fDate = document.getElementById('filter-date').value;
+            // --- 修改：新增篩選條件 ---
+            const fCase = document.getElementById('filter-casemode').value;
+            const fTime = document.getElementById('filter-time').value;
+
+            // 字母樣子顯示轉換 Map
+            const caseMap = { 'mixed': '大小皆可', 'upper': '僅大寫', 'lower': '僅小寫', 'strict-mixed': '混合打', 'Exam': 'Exam' };
 
             records = records.filter(rec => {
                 if (fClass && rec.class !== fClass) return false;
                 if (fLevel && String(rec.level) !== String(fLevel)) return false;
                 if (fDate && rec.filterDate !== fDate) return false;
+                if (fCase && rec.caseMode !== fCase) return false; // 字母樣子篩選
+                if (fTime && String(rec.timeMode) !== String(fTime)) return false; // 時間篩選
                 return true;
             });
 
-            // 修改排序邏輯：按分數從高到低排
             records.sort((a, b) => (b.score || 0) - (a.score || 0));
 
-            if(records.length===0) tbody.innerHTML = '<tr><td colspan="7">無資料</td></tr>';
+            if(records.length===0) tbody.innerHTML = '<tr><td colspan="9">無資料</td></tr>';
             else {
                 records.forEach(rec => {
-                    // 修改：增加錯字欄位顯示
-                    tbody.innerHTML += `<tr><td><input type="checkbox" class="del-chk" data-id="${rec.id}"></td><td>${rec.class}</td><td>${rec.name}</td><td>${rec.level}</td><td>${rec.score}</td><td>${rec.mistakes || 0}</td><td style="font-size:12px;">${rec.date}</td></tr>`; 
+                    // --- 修改：增加 Mode 和 Time 顯示 ---
+                    const displayMode = caseMap[rec.caseMode] || rec.caseMode || '-';
+                    const displayTime = rec.timeMode ? rec.timeMode + 's' : '-';
+                    tbody.innerHTML += `<tr><td><input type="checkbox" class="del-chk" data-id="${rec.id}"></td><td>${rec.class}</td><td>${rec.name}</td><td>${rec.level}</td><td>${displayMode}</td><td>${displayTime}</td><td>${rec.score}</td><td>${rec.mistakes || 0}</td><td style="font-size:12px;">${rec.date}</td></tr>`; 
                 });
             }
         }
 
-        function resetFilters() { document.getElementById('filter-class').value=""; document.getElementById('filter-level').value=""; document.getElementById('filter-date').value=""; renderAdminPanel(); }
+        function resetFilters() { 
+            document.getElementById('filter-class').value=""; 
+            document.getElementById('filter-level').value=""; 
+            document.getElementById('filter-date').value=""; 
+            document.getElementById('filter-casemode').value=""; // 重置樣子
+            document.getElementById('filter-time').value="";     // 重置時間
+            renderAdminPanel(); 
+        }
         function toggleAll(source) { document.querySelectorAll('.del-chk').forEach(cb => cb.checked = source.checked); }
         async function deleteSelected() {
             if(!confirm("確定刪除？")) return;
@@ -999,33 +1023,42 @@
             const fClass = document.getElementById('filter-class').value;
             const fLevel = document.getElementById('filter-level').value;
             const fDate = document.getElementById('filter-date').value;
+            const fCase = document.getElementById('filter-casemode').value;
+            const fTime = document.getElementById('filter-time').value;
+
             records = records.filter(rec => {
                 if (fClass && rec.class !== fClass) return false;
                 if (fLevel && String(rec.level) !== String(fLevel)) return false;
                 if (fDate && rec.filterDate !== fDate) return false;
+                if (fCase && rec.caseMode !== fCase) return false;
+                if (fTime && String(rec.timeMode) !== String(fTime)) return false;
                 return true;
             });
 
             if(records.length===0) return alert("無資料");
-            let csv = "\uFEFF班別,姓名,級別,分數,錯字,日期\n"; 
-            records.forEach(r => csv += `${r.class},${r.name},${r.level},${r.score},${r.mistakes||0},${r.date}\n`);
+            // --- 修改：Excel 增加欄位 ---
+            let csv = "\uFEFF班別,姓名,級別,模式,時間(秒),分數,錯字,日期\n"; 
+            records.forEach(r => {
+                const mode = r.caseMode || '-';
+                const time = r.timeMode || '-';
+                csv += `${r.class},${r.name},${r.level},${mode},${time},${r.score},${r.mistakes||0},${r.date}\n`;
+            });
             const link = document.createElement("a"); 
             link.href = URL.createObjectURL(new Blob([csv], {type:'text/csv;charset=utf-8;'}));
             link.download = "成績.csv"; link.click();
         }
 
-        // 修改：loadExamPreset 現在負責控制輸入框 和 字母樣子選擇 的顯示/隱藏
         function loadExamPreset() {
             const lvl = document.getElementById('admin-exam-preset').value; 
             const contentWrapper = document.getElementById('admin-content-wrapper');
             const caseWrapper = document.getElementById('admin-casemode-wrapper');
             
             if (lvl === 'custom') {
-                contentWrapper.style.display = 'block'; // 顯示輸入框
-                caseWrapper.style.display = 'none'; // 隱藏字母樣子 (強制原始)
+                contentWrapper.style.display = 'block'; 
+                caseWrapper.style.display = 'none'; 
             } else {
-                contentWrapper.style.display = 'none'; // 隱藏輸入框
-                caseWrapper.style.display = 'flex'; // 顯示字母樣子
+                contentWrapper.style.display = 'none'; 
+                caseWrapper.style.display = 'flex'; 
             }
         }
 
@@ -1037,12 +1070,11 @@
                 noHints: document.getElementById('admin-exam-nohints').checked,
                 noKeyboard: document.getElementById('admin-exam-nokeyboard').checked,
                 caseMode: document.getElementById('admin-exam-casemode').value,
-                levelMode: document.getElementById('admin-exam-preset').value // 儲存選擇的出題模式 (Lv1-4 or Custom)
+                levelMode: document.getElementById('admin-exam-preset').value 
             };
             if(window.saveExamConfigToFirebase) window.saveExamConfigToFirebase(config);
         }
         
-        // 新增：儲存練習設定函式
         function savePracticeSettings() {
             const config = {
                 noHints: document.getElementById('admin-practice-nohints').checked,
@@ -1078,7 +1110,6 @@
             const config = window.getExamConfig ? window.getExamConfig() : {};
             const pConfig = window.getPracticeConfig ? window.getPracticeConfig() : {};
             
-            // 檢查是否隱藏提示
             let hideHints = false;
             if (isExamMode) { if (config.noHints) hideHints = true; } 
             else { if (pConfig.noHints) hideHints = true; }
@@ -1102,11 +1133,9 @@
             const input = e.key;
             let isCorrect = false;
             
-            // 邏輯修正：如果是「自定內容考試」模式，強制使用嚴格比對 (完全不看 selectedCaseMode)
             if (isExamMode && !isRandomExam) {
                 if (input === currentTarget) isCorrect = true;
             } else {
-                // 練習模式 OR 隨機考試模式
                 if (selectedCaseMode === 'mixed') { 
                     if (input.toLowerCase() === currentTarget.toLowerCase()) isCorrect = true; 
                 } else if (selectedCaseMode === 'strict-mixed') {
@@ -1118,7 +1147,6 @@
 
             if(isCorrect) {
                 playSuccessSound(); score+=10; updateScore();
-                // 如果是自定內容考試，使用 char-current；如果是隨機考試，使用 target-char
                 const bounceEl = (isExamMode && !isRandomExam) ? document.querySelector('.char-current') : document.getElementById('target-char');
                 if(bounceEl) bounceEl.style.color = '#32cd32'; 
                 
@@ -1128,7 +1156,6 @@
                     document.getElementById('target-char').classList.add('bounce'); setTimeout(nextChar, 200); 
                 }
             } else {
-                // 修改：打錯不扣分，只增加錯字計數
                 mistakeCount++;
                 const shakeEl = (isExamMode && !isRandomExam) ? document.querySelector('.target-display') : document.getElementById('target-char');
                 shakeEl.classList.remove('shake'); void shakeEl.offsetWidth; shakeEl.classList.add('shake');
