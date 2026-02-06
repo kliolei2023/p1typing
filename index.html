@@ -47,9 +47,7 @@
         }
         .btn-opt:active { transform: translateY(3px); box-shadow: 0 2px 0 rgba(0,0,0,0.2); }
         
-        /* --- 修改：選中狀態改為「黑色粗框」 --- */
         .btn-opt.active { 
-            /* 原本是 white，現在改為 black (#000) */
             box-shadow: 0 0 0 4px #000, 0 6px 10px rgba(0,0,0,0.3); 
             transform: scale(1.05); 
             z-index: 5;
@@ -64,10 +62,9 @@
         .btn-time-opt {
             background: #eee; color: #555; border: none; box-shadow: 0 4px 0 #ccc;
         }
-        /* --- 修改：時間按鈕選中也加黑色粗框 --- */
         .btn-time-opt.active {
             background: #4682b4; color: white; 
-            box-shadow: 0 0 0 4px #000, 0 4px 0 #2c5c85; /* 加入黑色外框 */
+            box-shadow: 0 0 0 4px #000, 0 4px 0 #2c5c85; 
         }
 
         .btn-level-opt { 
@@ -93,9 +90,7 @@
         .color-purple { background: #9575CD; } 
         .color-orange { background: #FF8A65; } 
 
-        /* --- 修改：Level按鈕選中狀態改為「黑色粗框」 --- */
         .btn-level-opt.active { 
-            /* 原本是 white，現在改為 black (#000) */
             box-shadow: 0 0 0 5px #000, 0 8px 15px rgba(0,0,0,0.3); 
             transform: scale(1.02); 
             z-index: 10; 
@@ -300,10 +295,16 @@
     </div>
 
     <div id="leaderboard-modal" class="modal-overlay">
-        <div class="modal-content" style="width: 500px;">
-            <h2 style="color: #4682b4;">🏆 排名榜 🏆</h2>
+        <div class="modal-content" style="width: 800px; max-width: 95%;"> <h2 style="color: #4682b4;">🏆 排名榜 🏆</h2>
             <div style="max-height: 400px; overflow-y: auto;">
-                <table class="lb-table"><thead><tr><th>排名</th><th>姓名</th><th>班別</th><th>級別</th><th>分數</th><th>錯字</th></tr></thead><tbody id="lb-body"></tbody></table>
+                <table class="lb-table">
+                    <thead>
+                        <tr>
+                            <th>排名</th><th>姓名</th><th>班別</th><th>級別</th><th>模式</th><th>時間</th><th>分數</th><th>錯字</th>
+                        </tr>
+                    </thead>
+                    <tbody id="lb-body"></tbody>
+                </table>
             </div>
             <button class="modal-btn btn-neutral" onclick="closeModal('leaderboard-modal')" style="width: 100%; margin-top: 15px;">關閉</button>
         </div>
@@ -741,7 +742,7 @@
             const now = new Date();
             const dateStr = now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0');
             
-            // --- 修改：新增 caseMode 和 timeMode 記錄 ---
+            // 記錄 caseMode 和 timeMode
             const record = { 
                 name: currentUser.name, 
                 class: currentUser.classVal, 
@@ -928,17 +929,24 @@
             }
         }
 
+        // 修改：學生排名榜顯示邏輯
         async function showLeaderboard() {
-            const tbody = document.getElementById('lb-body'); tbody.innerHTML = '<tr><td colspan="5">載入中...</td></tr>';
+            const tbody = document.getElementById('lb-body'); tbody.innerHTML = '<tr><td colspan="8">載入中...</td></tr>';
             document.getElementById('leaderboard-modal').style.display = 'flex';
             if(window.fetchLeaderboard) {
                 const records = await window.fetchLeaderboard();
                 tbody.innerHTML = '';
-                if(records.length === 0) tbody.innerHTML = '<tr><td colspan="6">暫無紀錄</td></tr>';
+                if(records.length === 0) tbody.innerHTML = '<tr><td colspan="8">暫無紀錄</td></tr>';
                 else {
+                    const caseMap = { 'mixed': '大小皆可', 'upper': '僅大寫', 'lower': '僅小寫', 'strict-mixed': '混合打', 'Exam': 'Exam' };
                     records.forEach((rec, index) => {
                         let rankHTML = index+1; if(index==0) rankHTML='🥇'; else if(index==1) rankHTML='🥈'; else if(index==2) rankHTML='🥉';
-                        tbody.innerHTML += `<tr><td>${rankHTML}</td><td>${rec.name}</td><td>${rec.class}</td><td>${rec.level==='Exam'?'📝':('Lv.'+rec.level)}</td><td style="font-weight:bold;">${rec.score}</td><td>${rec.mistakes || 0}</td></tr>`;
+                        
+                        // 處理欄位顯示
+                        const displayMode = caseMap[rec.caseMode] || rec.caseMode || '-';
+                        const displayTime = rec.timeMode ? rec.timeMode + 's' : '-';
+
+                        tbody.innerHTML += `<tr><td>${rankHTML}</td><td>${rec.name}</td><td>${rec.class}</td><td>${rec.level==='Exam'?'📝':('Lv.'+rec.level)}</td><td>${displayMode}</td><td>${displayTime}</td><td style="font-weight:bold;">${rec.score}</td><td>${rec.mistakes || 0}</td></tr>`;
                     });
                 }
             }
@@ -963,7 +971,6 @@
             const fClass = document.getElementById('filter-class').value;
             const fLevel = document.getElementById('filter-level').value;
             const fDate = document.getElementById('filter-date').value;
-            // --- 修改：新增篩選條件 ---
             const fCase = document.getElementById('filter-casemode').value;
             const fTime = document.getElementById('filter-time').value;
 
@@ -974,8 +981,8 @@
                 if (fClass && rec.class !== fClass) return false;
                 if (fLevel && String(rec.level) !== String(fLevel)) return false;
                 if (fDate && rec.filterDate !== fDate) return false;
-                if (fCase && rec.caseMode !== fCase) return false; // 字母樣子篩選
-                if (fTime && String(rec.timeMode) !== String(fTime)) return false; // 時間篩選
+                if (fCase && rec.caseMode !== fCase) return false; 
+                if (fTime && String(rec.timeMode) !== String(fTime)) return false; 
                 return true;
             });
 
@@ -984,7 +991,6 @@
             if(records.length===0) tbody.innerHTML = '<tr><td colspan="9">無資料</td></tr>';
             else {
                 records.forEach(rec => {
-                    // --- 修改：增加 Mode 和 Time 顯示 ---
                     const displayMode = caseMap[rec.caseMode] || rec.caseMode || '-';
                     const displayTime = rec.timeMode ? rec.timeMode + 's' : '-';
                     tbody.innerHTML += `<tr><td><input type="checkbox" class="del-chk" data-id="${rec.id}"></td><td>${rec.class}</td><td>${rec.name}</td><td>${rec.level}</td><td>${displayMode}</td><td>${displayTime}</td><td>${rec.score}</td><td>${rec.mistakes || 0}</td><td style="font-size:12px;">${rec.date}</td></tr>`; 
@@ -996,8 +1002,8 @@
             document.getElementById('filter-class').value=""; 
             document.getElementById('filter-level').value=""; 
             document.getElementById('filter-date').value=""; 
-            document.getElementById('filter-casemode').value=""; // 重置樣子
-            document.getElementById('filter-time').value="";     // 重置時間
+            document.getElementById('filter-casemode').value=""; 
+            document.getElementById('filter-time').value="";     
             renderAdminPanel(); 
         }
         function toggleAll(source) { document.querySelectorAll('.del-chk').forEach(cb => cb.checked = source.checked); }
@@ -1036,7 +1042,6 @@
             });
 
             if(records.length===0) return alert("無資料");
-            // --- 修改：Excel 增加欄位 ---
             let csv = "\uFEFF班別,姓名,級別,模式,時間(秒),分數,錯字,日期\n"; 
             records.forEach(r => {
                 const mode = r.caseMode || '-';
