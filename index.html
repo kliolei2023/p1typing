@@ -67,7 +67,9 @@
        .back-btn { position: absolute; top: 10px; left: 10px; z-index: 100; background: #fff; border: 2px solid #ddd; padding: 5px 15px; border-radius: 20px; cursor: pointer; }
        .game-header { display: flex; justify-content: space-between; width: 90%; max-width: 800px; margin-bottom: 1vh; background: white; padding: 10px 20px; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
        
-       .target-display { font-size: clamp(50px, 12vh, 100px); font-weight: bold; color: var(--primary-color); height: clamp(80px, 18vh, 140px); display: flex; align-items: center; justify-content: center; margin-bottom: 1vh; text-shadow: 2px 2px 0px white; white-space: nowrap; }
+       /* 修改此處：為標靶顯示區設定 Verdana 字體，徹底解決 Y 和 y 混淆的問題 */
+       .target-display { font-family: Verdana, Arial, sans-serif; font-size: clamp(50px, 12vh, 100px); font-weight: bold; color: var(--primary-color); height: clamp(80px, 18vh, 140px); display: flex; align-items: center; justify-content: center; margin-bottom: 1vh; text-shadow: 2px 2px 0px white; white-space: nowrap; }
+       
        .target-display.bounce { animation: bounce 0.3s ease-in-out; } 
        .target-display.shake { animation: shake 0.4s ease-in-out; color: var(--error-color); }
        .char-done { color: #32cd32; } .char-current { text-decoration: underline; text-decoration-color: #ffd700; text-decoration-thickness: 5px; } .char-todo { color: #ccc; } 
@@ -148,11 +150,11 @@
        <div style="margin-top: 20px; width: 100%;">
            <div class="input-group" style="margin: 0 auto 20px auto;">
                 <label class="input-label">學號 ( No.)：</label>
-                <input type="text" id="input-name" class="input-field" placeholder="請輸入學號" autocomplete="off">
+                <input type="text" id="input-name" class="input-field" placeholder="例如:01" autocomplete="off">
            </div>
            <div class="input-group" style="margin: 0 auto 20px auto;">
                 <label class="input-label">班別 (Class)：</label>
-                <input type="text" id="input-class" class="input-field" placeholder="例如: 1A" autocomplete="off">
+                <input type="text" id="input-class" class="input-field" placeholder="例如: p1s" autocomplete="off">
            </div>
             <button class="btn-next" onclick="enterSetup()">下一步➡️</button>
        </div>
