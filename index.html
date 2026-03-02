@@ -1,1749 +1,1175 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-   <meta charset="UTF-8">
-   <meta name="viewport" content="width=device-width,
-initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-   <title>小一英文打字練習 (作者：李老師)</title>
-   <style>
-       :root {
-           --bg-color: #f0f8ff; --highlight-color: #ffd700; --correct-color: #98fb98;
---error-color: #ffb6c1;
-           --primary-color: #4682b4; --hand-skin: #f3cba6; --finger-highlight:
-#ff6347;
-           --c-l-pinky:#ffb7b2; --c-l-ring:#ffdac1; --c-l-middle:#fff2cc;
---c-l-index:#e2f0cb;
-           --c-r-index:#b5ead7; --c-r-middle:#c7ceea; --c-r-ring:#e0c3fc;
---c-r-pinky:#ffcbf2; --c-func:#e0e0e0;
-           --base-key-width: clamp(26px, 4.8vw, 52px); --key-gap: clamp(2px, 0.4vw,
-5px);
-       }
- 
-       body { font-family: "Comic Sans MS", "Microsoft
-JhengHei", sans-serif; background-color: var(--bg-color); margin: 0;
-user-select: none; overflow: hidden; height: 100vh; width: 100vw; display:
-flex; justify-content: center; align-items: center; }
-       h1 { color: var(--primary-color); margin: 0 0 1vh 0; font-size:
-clamp(24px, 4vh, 36px); text-align: center; text-shadow: 2px 2px white;}
-       
-       .screen-container { display: flex; flex-direction: column; align-items:
-center; background: white; padding: 2vh 3vw; border-radius: 30px; box-shadow: 0
-10px 20px rgba(0,0,0,0.15); width: 90%; max-width: 650px; text-align: center;
-overflow-y: auto; max-height: 98vh; border: 8px solid #b3e5fc; }
-       
-       .input-group { margin: 15px 0; width: 90%; }
-       .input-label { display: block; font-size: 22px; color: #444; margin-bottom:
-8px; font-weight: bold; }
-       .input-field { width: 100%; padding: 15px; font-size: 24px; border: 4px
-solid #ddd; border-radius: 20px; text-align: center; outline: none;
-font-family: inherit; box-sizing: border-box; background: #fafafa; }
-        .input-field:focus { border-color:
-#4682b4; background: #fff; }
-       
-       .btn-next { margin-top: 20px; padding: 15px 60px; background: #2196F3;
-color: white; border: none; border-radius: 50px; font-size: 28px; cursor:
-pointer; font-weight: bold; box-shadow: 0 8px 0 #0d47a1; transition: transform
-0.1s; width: 80%; }
-       .btn-next:active { transform: translateY(4px); box-shadow: 0 4px 0
-#0d47a1; }
-       
-       #setup-screen, #exam-entry-screen { display: none; }
-       .section-box { margin-bottom: 2vh; width: 100%; background: #fdfdfd;
-padding: 10px; border-radius: 20px; }
-       .section-title { font-size: 20px; color: #444; margin-bottom: 10px;
-font-weight: bold; background: #e3f2fd; display: inline-block; padding: 5px
-20px; border-radius: 15px; }
-       
-       .option-group { display: flex; justify-content: center; gap: 10px;
-flex-wrap: wrap; }
-       
-       .btn-opt { 
-           border: none; 
-           padding: 12px 20px; 
-           border-radius: 25px; 
-           cursor: pointer; 
-           color: white; 
-           font-family: inherit; 
-           font-size: 18px; 
-           font-weight: bold; 
-           min-width: 100px;
-           box-shadow: 0 5px 0 rgba(0,0,0,0.2); 
-           transition: all 0.2s;
-       }
-       .btn-opt:active { transform: translateY(3px); box-shadow: 0 2px 0
-rgba(0,0,0,0.2); }
-       
-       .btn-opt.active { 
-           box-shadow: 0 0 0 4px #000, 0 6px 10px rgba(0,0,0,0.3); 
-           transform: scale(1.05); 
-           z-index: 5;
-       }
- 
-       .color-opt-cyan   { background:
-#00BCD4; } 
-       .color-opt-red    { background:
-#FF7043; } 
-       .color-opt-green  { background:
-#9CCC65; } 
-       .color-opt-purple { background: #AB47BC; } 
-       .color-opt-gray   { background:
-#B0BEC5; color: #444; } 
-       
-       .btn-time-opt {
-           background: #eee; color: #555; border: none; box-shadow: 0 4px 0 #ccc;
-       }
-       .btn-time-opt.active {
-           background: #4682b4; color: white; 
-           box-shadow: 0 0 0 4px #000, 0 4px 0 #2c5c85; 
-       }
- 
-       .btn-level-opt { 
-           width: 48%; 
-           margin: 5px 0; 
-           padding: 15px 10px; 
-           border: none; 
-           border-radius: 25px; 
-           cursor: pointer; 
-           color: #fff; 
-           font-size: 20px; 
-           font-weight: bold;
-           box-shadow: 0 6px 0 rgba(0,0,0,0.2); 
-           transition: all 0.2s;
-           text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>小一英文打字練習 (作者：李老師)</title>
+    <style>
+        :root {
+            --bg-color: #f0f8ff; --highlight-color: #ffd700; --correct-color: #98fb98; --error-color: #ffb6c1;
+            --primary-color: #4682b4; --hand-skin: #f3cba6; --finger-highlight: #ff6347;
+            --c-l-pinky:#ffb7b2; --c-l-ring:#ffdac1; --c-l-middle:#fff2cc; --c-l-index:#e2f0cb;
+            --c-r-index:#b5ead7; --c-r-middle:#c7ceea; --c-r-ring:#e0c3fc; --c-r-pinky:#ffcbf2; --c-func:#e0e0e0;
+            --base-key-width: clamp(26px, 4.8vw, 52px); --key-gap: clamp(2px, 0.4vw, 5px);
+        }
+
+        body { font-family: "Comic Sans MS", "Microsoft JhengHei", sans-serif; background-color: var(--bg-color); margin: 0; user-select: none; overflow: hidden; height: 100vh; width: 100vw; display: flex; justify-content: center; align-items: center; }
+        h1 { color: var(--primary-color); margin: 0 0 1vh 0; font-size: clamp(24px, 4vh, 36px); text-align: center; text-shadow: 2px 2px white;}
+        
+        .screen-container { display: flex; flex-direction: column; align-items: center; background: white; padding: 2vh 3vw; border-radius: 30px; box-shadow: 0 10px 20px rgba(0,0,0,0.15); width: 90%; max-width: 650px; text-align: center; overflow-y: auto; max-height: 98vh; border: 8px solid #b3e5fc; }
+        
+        .input-group { margin: 15px 0; width: 90%; }
+        .input-label { display: block; font-size: 22px; color: #444; margin-bottom: 8px; font-weight: bold; }
+        .input-field { width: 100%; padding: 15px; font-size: 24px; border: 4px solid #ddd; border-radius: 20px; text-align: center; outline: none; font-family: inherit; box-sizing: border-box; background: #fafafa; }
+        .input-field:focus { border-color: #4682b4; background: #fff; }
+        
+        .btn-next { margin-top: 20px; padding: 15px 60px; background: #2196F3; color: white; border: none; border-radius: 50px; font-size: 28px; cursor: pointer; font-weight: bold; box-shadow: 0 8px 0 #0d47a1; transition: transform 0.1s; width: 80%; }
+        .btn-next:active { transform: translateY(4px); box-shadow: 0 4px 0 #0d47a1; }
+        
+        #setup-screen, #exam-entry-screen { display: none; }
+        .section-box { margin-bottom: 2vh; width: 100%; background: #fdfdfd; padding: 10px; border-radius: 20px; }
+        .section-title { font-size: 20px; color: #444; margin-bottom: 10px; font-weight: bold; background: #e3f2fd; display: inline-block; padding: 5px 20px; border-radius: 15px; }
+        
+        .option-group { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
+        
+        .btn-opt { 
+            border: none; 
+            padding: 12px 20px; 
+            border-radius: 25px; 
+            cursor: pointer; 
+            color: white; 
+            font-family: inherit; 
+            font-size: 18px; 
+            font-weight: bold; 
+            min-width: 100px;
+            box-shadow: 0 5px 0 rgba(0,0,0,0.2); 
+            transition: all 0.2s;
+        }
+        .btn-opt:active { transform: translateY(3px); box-shadow: 0 2px 0 rgba(0,0,0,0.2); }
+        
+        .btn-opt.active { 
+            box-shadow: 0 0 0 4px #000, 0 6px 10px rgba(0,0,0,0.3); 
+            transform: scale(1.05); 
+            z-index: 5;
+        }
+
+        .color-opt-cyan   { background: #00BCD4; } 
+        .color-opt-red    { background: #FF7043; } 
+        .color-opt-green  { background: #9CCC65; } 
+        .color-opt-purple { background: #AB47BC; } 
+        .color-opt-gray   { background: #B0BEC5; color: #444; } 
+        
+        .btn-time-opt {
+            background: #eee; color: #555; border: none; box-shadow: 0 4px 0 #ccc;
+        }
+        .btn-time-opt.active {
+            background: #4682b4; color: white; 
+            box-shadow: 0 0 0 4px #000, 0 4px 0 #2c5c85; 
+        }
+
+        .btn-level-opt { 
+            width: 48%; 
+            margin: 5px 0; 
+            padding: 15px 10px; 
+            border: none; 
+            border-radius: 25px; 
+            cursor: pointer; 
+            color: #fff; 
+            font-size: 20px; 
+            font-weight: bold;
+            box-shadow: 0 6px 0 rgba(0,0,0,0.2); 
+            transition: all 0.2s;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
             position: relative;
-       }
-       .btn-level-opt:active { transform: translateY(4px); box-shadow: 0 2px 0
-rgba(0,0,0,0.2); }
-       .btn-level-opt .level-desc { display: block; font-size: 14px; opacity:
-0.9; font-weight: normal; margin-top: 5px; }
-       
-       .color-yellow { background: #FFD54F; color: #5d4037; } 
-       .color-blue { background: #4FC3F7; } 
-       .color-purple { background: #9575CD; } 
-       .color-orange { background: #FF8A65; } 
- 
-       .btn-level-opt.active { 
-           box-shadow: 0 0 0 5px #000, 0 8px 15px rgba(0,0,0,0.3); 
-           transform: scale(1.02); 
-           z-index: 10; 
-       }
- 
-       .btn-start { 
-           margin-top: 2vh; 
-           padding: 15px 40px; 
-           width: 90%; 
-           background: #66BB6A; 
-           border: none; 
-           border-radius: 50px; 
-           font-size: 32px; 
-           font-weight: 900; 
-           color: white; 
-           cursor: pointer; 
-           box-shadow: 0 8px 0 #2E7D32; 
-           transition: all 0.1s;
-       }
-       .btn-start:active { transform: translateY(6px); box-shadow: 0 2px 0
-#2E7D32; }
-       .btn-exam-start { background: linear-gradient(135deg, #ff416c 0%,
-#ff4b2b 100%); box-shadow: 0 5px 15px rgba(255, 0, 0, 0.4); animation: pulse
-1.5s infinite; }
-       @keyframes pulse { 0% { transform: scale(1); } 50% { transform:
-scale(1.05); } 100% { transform: scale(1); } }
-       
-       .btn-leaderboard { margin-top: 15px; background: white; border: 2px
-solid #ffd700; padding: 10px 25px; border-radius: 30px; cursor: pointer; color:
-#f9a825; font-weight: bold; font-size: 16px; }
- 
-       #game-screen { display: none; flex-direction: column; align-items:
-center; justify-content: flex-start; width: 100%; height: 100%; padding-top:
-2vh; box-sizing: border-box; }
-       .back-btn { position: absolute; top: 10px; left: 10px; z-index: 100;
-background: #fff; border: 2px solid #ddd; padding: 5px 15px; border-radius:
-20px; cursor: pointer; }
-       .game-header { display: flex; justify-content: space-between; width:
-90%; max-width: 800px; margin-bottom: 1vh; background: white; padding: 10px
-20px; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-       
-       .target-display { font-size: clamp(50px, 12vh, 100px); font-weight:
-bold; color: var(--primary-color); height: clamp(80px, 18vh, 140px); display:
-flex; align-items: center; justify-content: center; margin-bottom: 1vh;
-text-shadow: 2px 2px 0px white; white-space: nowrap; }
-       .target-display.bounce { animation: bounce 0.3s ease-in-out; } 
-       .target-display.shake { animation: shake 0.4s ease-in-out; color:
-var(--error-color); }
-       .char-done { color: #32cd32; } .char-current { text-decoration:
-underline; text-decoration-color: #ffd700; text-decoration-thickness: 5px; }
-.char-todo { color: #ccc; } 
-       @keyframes bounce { 0% { transform: scale(1); } 50% { transform: scale(1.1);
-} 100% { transform: scale(1); } }
-       @keyframes shake { 0%, 100% { transform: translateX(0); } 25% {
-transform: translateX(-10px); } 75% { transform: translateX(10px); } }
- 
-       .keyboard { background: #dceefc; padding: 2vh 2vw; border-radius: 20px;
-box-shadow: 0 1vh 0 #b0c4de; margin-bottom: 1vh; position: relative; display:
-flex; flex-direction: column; align-items: flex-start; width: fit-content;
-transition: opacity 0.5s; }
-       .keyboard.hidden { display: none !important; } 
-        .row { display: flex; justify-content:
-flex-start; margin-bottom: 1vh; gap: var(--key-gap); }
-       .row.r1 { margin-left: calc(var(--base-key-width) * 1.5); } .row.r2 {
-margin-left: 0; } .row.r3 { margin-left: 0; }
-       .key { width: var(--base-key-width); height: var(--base-key-width);
-border-radius: 12%; display: flex; align-items: center; justify-content:
-center; font-size: calc(var(--base-key-width) * 0.5); font-weight: bold;
-box-shadow: 0 0.5vh 0 rgba(0,0,0,0.1); color: #444; transition: all 0.1s;
-border-bottom: 3px solid rgba(0,0,0,0.1); position: relative; z-index: 1;
-flex-shrink: 0; }
-       .key.space { width: calc(var(--base-key-width) * 5); } 
-       .key.func { background-color: var(--c-func); font-size:
-calc(var(--base-key-width) * 0.35); }
-       .key.caps { width: calc(var(--base-key-width) * 1.75); } .key.shift-l {
-width: calc(var(--base-key-width) * 2.25); } .key.shift-r { width:
-calc(var(--base-key-width) * 2.5); } 
-       .k-lp{background:var(--c-l-pinky)} .k-lr{background:var(--c-l-ring)}
-.k-lm{background:var(--c-l-middle)} .k-li{background:var(--c-l-index)}
-.k-ri{background:var(--c-r-index)} .k-rm{background:var(--c-r-middle)}
-.k-rr{background:var(--c-r-ring)} .k-rp{background:var(--c-r-pinky)}
-       .key.active { background-color: var(--highlight-color) !important;
-transform: translateY(0.5vh); border: 2px solid #ff8c00; border-bottom: none;
-color: black; z-index: 2; }
-       .key.caps.on { border: 2px solid #32cd32; box-shadow: 0 0 10px #32cd32;
-}
-       
-       #tracer { position: absolute; width: calc(var(--base-key-width) * 0.4);
-height: calc(var(--base-key-width) * 0.4); background: radial-gradient(circle,
-#fff 20%, #ffd700 100%); border-radius: 50%; pointer-events: none; opacity: 0;
-z-index: 1000; box-shadow: 0 0 15px #ffd700; top: 0; left: 0; will-change:
-transform, opacity; }
-       #tracer.animating { animation: trace-move 1.2s infinite ease-out; }
-       @keyframes trace-move { 0% { transform: translate(var(--x1), var(--y1))
-scale(0.5); opacity: 0.9; } 70% { opacity: 0.9; } 100% { transform:
-translate(var(--x2), var(--y2)) scale(1.5); opacity: 0; } }
-       
-       .hands-container { display: flex; justify-content: space-between; width:
-90%; max-width: 600px; flex-grow: 1; max-height: 25vh; }
-       .hands-container.hidden { display: none !important; }
-       .hand { width: 45%; height: 100%; position: relative; }
-       svg { width: 100%; height: 100%; } .skin { fill: var(--hand-skin);
-stroke: #dba378; stroke-width: 2; } .finger { transition: fill 0.2s; }
-.finger.active { fill: var(--finger-highlight); }
- 
-       .modal-overlay { display: none; position: fixed; top: 0; left: 0; width:
-100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000;
-justify-content: center; align-items: center; backdrop-filter: blur(5px); }
-       .modal-content { background: white; padding: 30px; border-radius: 30px;
-text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.3); max-width: 90%;
-width: 450px; border: 5px solid #4682b4; max-height: 80vh; overflow-y: auto; }
-       
-       .admin-trigger { position: fixed; bottom: 20px; left: 20px; width: 50px;
-height: 50px; background: white; border: 2px solid #e0e0e0; border-radius: 50%;
-box-shadow: 0 4px 10px rgba(0,0,0,0.1); cursor: pointer; z-index: 2000;
-font-size: 24px; color: #888; transition: all 0.3s ease; display: flex;
-justify-content: center; align-items: center; }
-       .admin-trigger:hover { transform: rotate(90deg) scale(1.1); color:
-var(--primary-color); border-color: var(--primary-color); box-shadow: 0 4px
-15px rgba(70, 130, 180, 0.3); }
- 
-       .modal-btn { margin: 5px; padding: 10px 20px; border-radius: 12px;
-border: none; font-size: 15px; font-weight: 600; cursor: pointer; color: white;
-transition: all 0.2s ease; box-shadow: 0 4px 6px rgba(0,0,0,0.1); display:
-inline-flex; align-items: center; justify-content: center; gap: 5px; }
-       .modal-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 12px
-rgba(0,0,0,0.15); }
-       .modal-btn:active { transform: translateY(0); }
-       
-       #result-modal .modal-btn {
-           background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
-           font-size: 32px; /* 字體加大 */
-           padding: 20px 60px; /* 按鈕加大 */
-           box-shadow: 0 10px 25px rgba(255, 65, 108, 0.5); /* 強烈陰影 */
-           border-radius: 50px;
-       }
-       #result-modal .modal-btn:hover { transform: scale(1.1); }
- 
-       .btn-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2
-100%); }
-       .btn-success { background: linear-gradient(135deg, #2af598 0%, #009efd
-100%); }
-       .btn-danger  { background:
-linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%); color: #d63031; }
-       .btn-danger-solid { background: linear-gradient(135deg, #ff5f6d 0%,
-#ffc371 100%); color: white; }
-       .btn-neutral { background: #f0f0f0; color: #666; box-shadow: none;
-border: 1px solid #ddd;}
-       .btn-neutral:hover { background: #e0e0e0; box-shadow: none; }
- 
-       .admin-tabs { display: flex; justify-content: center; gap: 10px;
-margin-bottom: 20px; border-bottom: 2px solid #eee; padding-bottom: 10px; }
-       .tab-btn { background: none; border: none; font-size: 16px; color: #888;
-padding: 8px 16px; cursor: pointer; font-weight: bold; border-radius: 20px;
-transition: 0.2s; }
-       .tab-btn:hover { background: #f0f0f0; }
-       .tab-btn.active { background: #e6f3ff; color: #4682b4; }
-       .tab-content { display: none; animation: fadeIn 0.3s; }
-       .tab-content.active { display: block; }
-       @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to
-{ opacity: 1; transform: translateY(0); } }
- 
-       .exam-settings-box { border: 2px dashed #ffb6c1; padding: 20px;
-border-radius: 15px; background: #fffafb; text-align: left; }
-       .exam-input { width: 100%; height: 80px; padding: 10px; border: 1px
-solid #ddd; border-radius: 10px; margin-top: 5px; font-family: monospace;
-font-size: 16px; box-sizing: border-box; }
-       .setting-row { margin: 12px 0; display: flex; align-items: center; gap:
-10px; font-size: 15px; flex-wrap: wrap; }
-       .toggle-label { font-weight: bold; color: #444; cursor: pointer;
-display: flex; align-items: center; gap: 8px; background: white; padding: 5px
-10px; border-radius: 20px; border: 1px solid #eee;}
-       input[type="checkbox"] { width: 18px; height: 18px; cursor:
-pointer; accent-color: #ff6b6b; }
- 
-       .admin-filter-bar { display: flex; gap: 10px; align-items: center;
-margin-bottom: 15px; background: #f8f9fa; padding: 12px; border-radius: 12px;
-flex-wrap: wrap; border: 1px solid #e0e0e0; }
-       .filter-select { padding: 8px; border-radius: 8px; border: 1px solid
-#ccc; font-size: 14px; outline: none; }
-       .filter-select:focus { border-color: #4682b4; }
- 
-       .result-score { font-size: clamp(80px, 20vh, 140px); color: #ff4500;
-font-weight: 900; text-shadow: 5px 5px 0px #ffd700; }
-       .lb-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-       .lb-table th { background: #4682b4; color: white; padding: 10px;
-position: sticky; top: 0; font-size: 14px;}
-       .lb-table td { padding: 10px; border-bottom: 1px solid #eee; font-size:
-14px; color: #555; }
-   </style>
+        }
+        .btn-level-opt:active { transform: translateY(4px); box-shadow: 0 2px 0 rgba(0,0,0,0.2); }
+        .btn-level-opt .level-desc { display: block; font-size: 14px; opacity: 0.9; font-weight: normal; margin-top: 5px; }
+        
+        .color-yellow { background: #FFD54F; color: #5d4037; } 
+        .color-blue { background: #4FC3F7; } 
+        .color-purple { background: #9575CD; } 
+        .color-orange { background: #FF8A65; } 
+
+        .btn-level-opt.active { 
+            box-shadow: 0 0 0 5px #000, 0 8px 15px rgba(0,0,0,0.3); 
+            transform: scale(1.02); 
+            z-index: 10; 
+        }
+
+        .btn-start { 
+            margin-top: 2vh; 
+            padding: 15px 40px; 
+            width: 90%; 
+            background: #66BB6A; 
+            border: none; 
+            border-radius: 50px; 
+            font-size: 32px; 
+            font-weight: 900; 
+            color: white; 
+            cursor: pointer; 
+            box-shadow: 0 8px 0 #2E7D32; 
+            transition: all 0.1s;
+        }
+        .btn-start:active { transform: translateY(6px); box-shadow: 0 2px 0 #2E7D32; }
+        .btn-exam-start { background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%); box-shadow: 0 5px 15px rgba(255, 0, 0, 0.4); animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+        
+        .btn-leaderboard { margin-top: 15px; background: white; border: 2px solid #ffd700; padding: 10px 25px; border-radius: 30px; cursor: pointer; color: #f9a825; font-weight: bold; font-size: 16px; }
+
+        #game-screen { display: none; flex-direction: column; align-items: center; justify-content: flex-start; width: 100%; height: 100%; padding-top: 2vh; box-sizing: border-box; }
+        .back-btn { position: absolute; top: 10px; left: 10px; z-index: 100; background: #fff; border: 2px solid #ddd; padding: 5px 15px; border-radius: 20px; cursor: pointer; }
+        .game-header { display: flex; justify-content: space-between; width: 90%; max-width: 800px; margin-bottom: 1vh; background: white; padding: 10px 20px; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        
+        .target-display { font-size: clamp(50px, 12vh, 100px); font-weight: bold; color: var(--primary-color); height: clamp(80px, 18vh, 140px); display: flex; align-items: center; justify-content: center; margin-bottom: 1vh; text-shadow: 2px 2px 0px white; white-space: nowrap; }
+        .target-display.bounce { animation: bounce 0.3s ease-in-out; } 
+        .target-display.shake { animation: shake 0.4s ease-in-out; color: var(--error-color); }
+        .char-done { color: #32cd32; } .char-current { text-decoration: underline; text-decoration-color: #ffd700; text-decoration-thickness: 5px; } .char-todo { color: #ccc; } 
+        @keyframes bounce { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-10px); } 75% { transform: translateX(10px); } }
+
+        .keyboard { background: #dceefc; padding: 2vh 2vw; border-radius: 20px; box-shadow: 0 1vh 0 #b0c4de; margin-bottom: 1vh; position: relative; display: flex; flex-direction: column; align-items: flex-start; width: fit-content; transition: opacity 0.5s; }
+        .keyboard.hidden { display: none !important; } 
+        .row { display: flex; justify-content: flex-start; margin-bottom: 1vh; gap: var(--key-gap); }
+        .row.r1 { margin-left: calc(var(--base-key-width) * 1.5); } .row.r2 { margin-left: 0; } .row.r3 { margin-left: 0; }
+        .key { width: var(--base-key-width); height: var(--base-key-width); border-radius: 12%; display: flex; align-items: center; justify-content: center; font-size: calc(var(--base-key-width) * 0.5); font-weight: bold; box-shadow: 0 0.5vh 0 rgba(0,0,0,0.1); color: #444; transition: all 0.1s; border-bottom: 3px solid rgba(0,0,0,0.1); position: relative; z-index: 1; flex-shrink: 0; }
+        .key.space { width: calc(var(--base-key-width) * 5); } 
+        .key.func { background-color: var(--c-func); font-size: calc(var(--base-key-width) * 0.35); }
+        .key.caps { width: calc(var(--base-key-width) * 1.75); } .key.shift-l { width: calc(var(--base-key-width) * 2.25); } .key.shift-r { width: calc(var(--base-key-width) * 2.5); } 
+        .k-lp{background:var(--c-l-pinky)} .k-lr{background:var(--c-l-ring)} .k-lm{background:var(--c-l-middle)} .k-li{background:var(--c-l-index)} .k-ri{background:var(--c-r-index)} .k-rm{background:var(--c-r-middle)} .k-rr{background:var(--c-r-ring)} .k-rp{background:var(--c-r-pinky)}
+        .key.active { background-color: var(--highlight-color) !important; transform: translateY(0.5vh); border: 2px solid #ff8c00; border-bottom: none; color: black; z-index: 2; }
+        .key.caps.on { border: 2px solid #32cd32; box-shadow: 0 0 10px #32cd32; }
+        
+        #tracer { position: absolute; width: calc(var(--base-key-width) * 0.4); height: calc(var(--base-key-width) * 0.4); background: radial-gradient(circle, #fff 20%, #ffd700 100%); border-radius: 50%; pointer-events: none; opacity: 0; z-index: 1000; box-shadow: 0 0 15px #ffd700; top: 0; left: 0; will-change: transform, opacity; }
+        #tracer.animating { animation: trace-move 1.2s infinite ease-out; }
+        @keyframes trace-move { 0% { transform: translate(var(--x1), var(--y1)) scale(0.5); opacity: 0.9; } 70% { opacity: 0.9; } 100% { transform: translate(var(--x2), var(--y2)) scale(1.5); opacity: 0; } }
+        
+        .hands-container { display: flex; justify-content: space-between; width: 90%; max-width: 600px; flex-grow: 1; max-height: 25vh; }
+        .hands-container.hidden { display: none !important; }
+        .hand { width: 45%; height: 100%; position: relative; }
+        svg { width: 100%; height: 100%; } .skin { fill: var(--hand-skin); stroke: #dba378; stroke-width: 2; } .finger { transition: fill 0.2s; } .finger.active { fill: var(--finger-highlight); }
+
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: center; backdrop-filter: blur(5px); }
+        .modal-content { background: white; padding: 30px; border-radius: 30px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.3); max-width: 90%; width: 450px; border: 5px solid #4682b4; max-height: 80vh; overflow-y: auto; }
+        
+        .admin-trigger { position: fixed; bottom: 20px; left: 20px; width: 50px; height: 50px; background: white; border: 2px solid #e0e0e0; border-radius: 50%; box-shadow: 0 4px 10px rgba(0,0,0,0.1); cursor: pointer; z-index: 2000; font-size: 24px; color: #888; transition: all 0.3s ease; display: flex; justify-content: center; align-items: center; }
+        .admin-trigger:hover { transform: rotate(90deg) scale(1.1); color: var(--primary-color); border-color: var(--primary-color); box-shadow: 0 4px 15px rgba(70, 130, 180, 0.3); }
+
+        .modal-btn { margin: 5px; padding: 10px 20px; border-radius: 12px; border: none; font-size: 15px; font-weight: 600; cursor: pointer; color: white; transition: all 0.2s ease; box-shadow: 0 4px 6px rgba(0,0,0,0.1); display: inline-flex; align-items: center; justify-content: center; gap: 5px; }
+        .modal-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 12px rgba(0,0,0,0.15); }
+        .modal-btn:active { transform: translateY(0); }
+        
+        #result-modal .modal-btn {
+            background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
+            font-size: 32px; /* 字體加大 */
+            padding: 20px 60px; /* 按鈕加大 */
+            box-shadow: 0 10px 25px rgba(255, 65, 108, 0.5); /* 強烈陰影 */
+            border-radius: 50px;
+        }
+        #result-modal .modal-btn:hover { transform: scale(1.1); }
+
+        .btn-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .btn-success { background: linear-gradient(135deg, #2af598 0%, #009efd 100%); }
+        .btn-danger  { background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%); color: #d63031; }
+        .btn-danger-solid { background: linear-gradient(135deg, #ff5f6d 0%, #ffc371 100%); color: white; }
+        .btn-neutral { background: #f0f0f0; color: #666; box-shadow: none; border: 1px solid #ddd;}
+        .btn-neutral:hover { background: #e0e0e0; box-shadow: none; }
+
+        .admin-tabs { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        .tab-btn { background: none; border: none; font-size: 16px; color: #888; padding: 8px 16px; cursor: pointer; font-weight: bold; border-radius: 20px; transition: 0.2s; }
+        .tab-btn:hover { background: #f0f0f0; }
+        .tab-btn.active { background: #e6f3ff; color: #4682b4; }
+        .tab-content { display: none; animation: fadeIn 0.3s; }
+        .tab-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+        .exam-settings-box { border: 2px dashed #ffb6c1; padding: 20px; border-radius: 15px; background: #fffafb; text-align: left; }
+        .exam-input { width: 100%; height: 80px; padding: 10px; border: 1px solid #ddd; border-radius: 10px; margin-top: 5px; font-family: monospace; font-size: 16px; box-sizing: border-box; }
+        .setting-row { margin: 12px 0; display: flex; align-items: center; gap: 10px; font-size: 15px; flex-wrap: wrap; }
+        .toggle-label { font-weight: bold; color: #444; cursor: pointer; display: flex; align-items: center; gap: 8px; background: white; padding: 5px 10px; border-radius: 20px; border: 1px solid #eee;}
+        input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; accent-color: #ff6b6b; }
+
+        .admin-filter-bar { display: flex; gap: 10px; align-items: center; margin-bottom: 15px; background: #f8f9fa; padding: 12px; border-radius: 12px; flex-wrap: wrap; border: 1px solid #e0e0e0; }
+        .filter-select { padding: 8px; border-radius: 8px; border: 1px solid #ccc; font-size: 14px; outline: none; }
+        .filter-select:focus { border-color: #4682b4; }
+
+        .result-score { font-size: clamp(80px, 20vh, 140px); color: #ff4500; font-weight: 900; text-shadow: 5px 5px 0px #ffd700; }
+        .lb-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        .lb-table th { background: #4682b4; color: white; padding: 10px; position: sticky; top: 0; font-size: 14px;}
+        .lb-table td { padding: 10px; border-bottom: 1px solid #eee; font-size: 14px; color: #555; }
+    </style>
 </head>
 <body>
- 
-   <button class="admin-trigger"
-onclick="openAdminLogin()" title="老師專用設定">⚙️</button>
- 
-   <div id="login-screen"
-class="screen-container">
-       <h1>👋 歡迎來到化地瑪小一同學的打字練習</h1>
-       <div style="margin-top: 20px; width: 100%;">
-           <div class="input-group" style="margin: 0 auto 20px
-auto;">
-                <label
-class="input-label">學號 ( No.)：</label>
-                <input type="text"
-id="input-name" class="input-field" placeholder="請輸入學號"
-autocomplete="off">
-           </div>
-           <div class="input-group" style="margin: 0 auto 20px
-auto;">
-                <label
-class="input-label">班別 (Class)：</label>
-                <input type="text"
-id="input-class" class="input-field" placeholder="例如: 1A"
-autocomplete="off">
-           </div>
-            <button class="btn-next"
-onclick="enterSetup()">下一步➡️</button>
-       </div>
-   </div>
- 
-   <div id="exam-entry-screen"
-class="screen-container">
-       <h1>📝 考試模式 📝</h1>
-       <div class="section-box">
-           <p style="font-size: 20px; color: #555;">請準備好，老師已經設定好題目了！</p>
-           <p style="font-size: 16px; color: #888;">注意：請依照畫面顯示的文字順序打字。</p>
-       </div>
-       <button class="btn-start btn-exam-start"
-onclick="startExam()">📝 開始考試</button>
-   </div>
- 
-   <div id="setup-screen" class="screen-container">
-       <h1>🎈 設定練習模式 🎈</h1>
-       
-       <div class="section-box" style="padding: 5px;
-background: transparent;">
-            <div class="section-title" style="font-size: 18px;
-margin-bottom: 10px;">Step 1: 字母樣子 (選顏色)</div>
-            <div class="option-group">
-                 <button class="btn-opt
-color-opt-cyan active" id="opt-mixed"
-onclick="selectCaseOption('mixed')">大小皆可</button>
-                 <button class="btn-opt
-color-opt-red" id="opt-upper" onclick="selectCaseOption('upper')">僅大寫</button>
-                 <button class="btn-opt
-color-opt-green" id="opt-lower"
-onclick="selectCaseOption('lower')">僅小寫</button>
-                 <button class="btn-opt
-color-opt-purple" id="opt-strict-mixed"
-onclick="selectCaseOption('strict-mixed')">混合打</button>
+
+    <button class="admin-trigger" onclick="openAdminLogin()" title="老師專用設定">⚙️</button>
+
+    <div id="login-screen" class="screen-container">
+        <h1>👋 歡迎來到化地瑪小一同學的打字練習</h1>
+        <div style="margin-top: 20px; width: 100%;">
+            <div class="input-group" style="margin: 0 auto 20px auto;">
+                <label class="input-label">學號 ( No.)：</label>
+                <input type="text" id="input-name" class="input-field" placeholder="請輸入學號" autocomplete="off">
             </div>
-       </div>
- 
-       <div class="section-box" style="background:
-transparent;">
-           <div class="section-title" style="font-size: 24px;
-color: #333;">👇 Step
-2: 選顏色 (Level) 👇</div>
-           <div class="option-group">
-                <button
-class="btn-level-opt color-yellow active" id="lvl-1"
-onclick="selectLevel(1)">Level 1<span
-class="level-desc">中間排 (黃)</span></button>
-                <button
-class="btn-level-opt color-blue" id="lvl-2" onclick="selectLevel(2)">Level
-2<span class="level-desc">上排 (藍)</span></button>
-                <button
-class="btn-level-opt color-purple" id="lvl-3"
-onclick="selectLevel(3)">Level 3<span
-class="level-desc">下排 (紫)</span></button>
-                <button class="btn-level-opt
-color-orange" id="lvl-4"
-onclick="selectLevel(4)">Level 4<span
-class="level-desc">全鍵盤 (橙)</span></button>
-           </div>
-       </div>
- 
-       <div class="section-box" style="padding: 5px;
-background: transparent;">
-           <div class="section-title" style="font-size: 16px;
-margin-bottom: 5px;">Step 3: 時間 (秒)</div>
-           <div class="option-group">
+            <div class="input-group" style="margin: 0 auto 20px auto;">
+                <label class="input-label">班別 (Class)：</label>
+                <input type="text" id="input-class" class="input-field" placeholder="例如: 1A" autocomplete="off">
+            </div>
+            <button class="btn-next" onclick="enterSetup()">下一步 ➡️</button>
+        </div>
+    </div>
+
+    <div id="exam-entry-screen" class="screen-container">
+        <h1>📝 考試模式 📝</h1>
+        <div class="section-box">
+            <p style="font-size: 20px; color: #555;">請準備好，老師已經設定好題目了！</p>
+            <p style="font-size: 16px; color: #888;">注意：請依照畫面顯示的文字順序打字。</p>
+        </div>
+        <button class="btn-start btn-exam-start" onclick="startExam()">📝 開始考試</button>
+    </div>
+
+    <div id="setup-screen" class="screen-container">
+        <h1>🎈 設定練習模式 🎈</h1>
+        
+        <div class="section-box" style="padding: 5px; background: transparent;">
+             <div class="section-title" style="font-size: 18px; margin-bottom: 10px;">Step 1: 字母樣子 (選顏色)</div>
+             <div class="option-group">
+                 <button class="btn-opt color-opt-cyan active" id="opt-mixed" onclick="selectCaseOption('mixed')">大小皆可</button>
+                 <button class="btn-opt color-opt-red" id="opt-upper" onclick="selectCaseOption('upper')">僅大寫</button>
+                 <button class="btn-opt color-opt-green" id="opt-lower" onclick="selectCaseOption('lower')">僅小寫</button>
+                 <button class="btn-opt color-opt-purple" id="opt-strict-mixed" onclick="selectCaseOption('strict-mixed')">混合打</button>
+             </div>
+        </div>
+
+        <div class="section-box" style="background: transparent;">
+            <div class="section-title" style="font-size: 24px; color: #333;">👇 Step 2: 選顏色 (Level) 👇</div>
+            <div class="option-group">
+                <button class="btn-level-opt color-yellow active" id="lvl-1" onclick="selectLevel(1)">Level 1<span class="level-desc">中間排 (黃)</span></button>
+                <button class="btn-level-opt color-blue" id="lvl-2" onclick="selectLevel(2)">Level 2<span class="level-desc">上排 (藍)</span></button>
+                <button class="btn-level-opt color-purple" id="lvl-3" onclick="selectLevel(3)">Level 3<span class="level-desc">下排 (紫)</span></button>
+                <button class="btn-level-opt color-orange" id="lvl-4" onclick="selectLevel(4)">Level 4<span class="level-desc">全鍵盤 (橙)</span></button>
+            </div>
+        </div>
+
+        <div class="section-box" style="padding: 5px; background: transparent;">
+            <div class="section-title" style="font-size: 16px; margin-bottom: 5px;">Step 3: 時間 (秒)</div>
+            <div class="option-group">
                 <button class="btn-opt btn-time-opt" id="time-30" onclick="selectTime(30)">30</button>
                 <button class="btn-opt btn-time-opt" id="time-60" onclick="selectTime(60)">60</button>
                 <button class="btn-opt btn-time-opt active" id="time-90" onclick="selectTime(90)">90</button>
                 <button class="btn-opt btn-time-opt" id="time-120" onclick="selectTime(120)">120</button>
-                <button class="btn-opt btn-time-opt" id="time-180" onclick="selectTime(180)">180</button>
-                <button class="btn-opt btn-time-opt" id="time-240" onclick="selectTime(240)">240</button>
-                <button class="btn-opt btn-time-opt" id="time-300" onclick="selectTime(300)">300</button>
-           </div>
-       </div>
-       
-       <button class="btn-start"
-onclick="startGame()">🚀 開始遊戲 (GO)</button>
-       <button class="btn-leaderboard"
-onclick="showLeaderboard()">🏆 查看排名榜</button>
-   </div>
- 
-   <div id="game-screen">
-       <button class="back-btn" onclick="goHome()">🏠 結束</button>
-       <div class="game-header">
-           <div class="info-box"><span
-id="player-display"></span><span
-id="level-indicator" style="color: #555; margin-left: 5px;">Level
-1</span></div>
-           <div class="info-box"><span
-class="icon">⏱️</span>
-<span id="timer">90</span><span
-style="margin-left:15px;" class="icon">⭐</span> <span
-id="score">0</span></div>
-       </div>
-       <div id="status-msg"></div>
-        <div class="target-display"
-id="target-char">A</div>
-       
-       <div class="keyboard" id="keyboard-ui">
-           <div id="tracer"></div>
-           <div class="row r1"><div class="key k-lp"
-id="key-q">Q</div><div class="key k-lr"
-id="key-w">W</div><div class="key k-lm"
-id="key-e">E</div><div class="key k-li"
-id="key-r">R</div><div class="key k-li"
-id="key-t">T</div><div class="key k-ri"
-id="key-y">Y</div><div class="key k-ri"
-id="key-u">U</div><div class="key k-rm"
-id="key-i">I</div><div class="key k-rr"
-id="key-o">O</div><div class="key k-rp"
-id="key-p">P</div></div>
-           <div class="row r2"><div class="key func
-caps" id="key-capslock">Caps</div><div
-class="key k-lp" id="key-a">A</div><div class="key
-k-lr" id="key-s">S</div><div class="key
-k-lm" id="key-d">D</div><div class="key
-k-li" id="key-f">F</div><div class="key
-k-li" id="key-g">G</div><div class="key
-k-ri" id="key-h">H</div><div class="key
-k-ri" id="key-j">J</div><div class="key
-k-rm" id="key-k">K</div><div class="key
-k-rr" id="key-l">L</div><div class="key
-k-rp" id="key-semicolon">;</div></div>
-           <div class="row r3"><div class="key func
-shift-l" id="key-shift-l">Shift</div><div
-class="key k-lp" id="key-z">Z</div><div
-class="key k-lr" id="key-x">X</div><div
-class="key k-lm" id="key-c">C</div><div
-class="key k-li" id="key-v">V</div><div
-class="key k-li" id="key-b">B</div><div
-class="key k-ri" id="key-n">N</div><div
-class="key k-ri" id="key-m">M</div><div
-class="key func shift-r"
-id="key-shift-r">Shift</div></div>
-           <div class="row r4"
-style="margin-left: 4u;"><div class="key space"
-id="key-space"></div></div>
-       </div>
-       
-       <div class="hands-container" id="hands-ui">
-           <div class="hand"><svg viewBox="0 0 200
-200" preserveAspectRatio="xMidYMax meet"><path
-id="l-pinky" class="finger skin" d="M20,100 Q15,60
-30,50 Q45,60 40,100 L40,140 L20,140 Z" /><path id="l-ring"
-class="finger skin" d="M50,100 Q45,40 65,30 Q85,40 80,100
-L80,140 L50,140 Z" /><path id="l-middle"
-class="finger skin" d="M90,100 Q85,20 110,15 Q135,20 130,100
-L130,140 L90,140 Z" /><path id="l-index"
-class="finger skin" d="M140,100 Q135,40 155,35 Q175,40 170,100
-L170,140 L140,140 Z" /><path id="l-thumb"
-class="finger skin" d="M180,140 Q200,120 220,130 Q210,160
-180,170 Z" transform="translate(-20,0)"/><path
-class="skin" d="M20,140 L170,140 Q160,190 95,190 Q30,190 20,140
-Z" /></svg></div>
-           <div class="hand"><svg viewBox="0 0 200
-200" preserveAspectRatio="xMidYMax meet"><path
-id="r-pinky" class="finger skin" d="M180,100 Q185,60
-170,50 Q155,60 160,100 L160,140 L180,140 Z" /><path
-id="r-ring" class="finger skin" d="M150,100 Q155,40
-135,30 Q115,40 120,100 L120,140 L150,140 Z" /><path
-id="r-middle" class="finger skin" d="M110,100 Q115,20
-90,15 Q65,20 70,100 L70,140 L110,140 Z" /><path
-id="r-index" class="finger skin" d="M60,100 Q65,40
-45,35 Q25,40 30,100 L30,140 L60,140 Z" /><path
-id="r-thumb" class="finger skin" d="M20,140 Q0,120
--20,130 Q-10,160 20,170 Z" transform="translate(40,0)"/><path
-class="skin" d="M180,140 L30,140 Q40,190 105,190 Q170,190
-180,140 Z" /></svg></div>
-       </div>
-   </div>
- 
-   <div id="result-modal" class="modal-overlay">
-       <div class="modal-content">
-           <h2>🎉 時間到！ 🎉</h2>
-           <div class="result-score"
-id="final-score">0</div>
-           <div><button class="modal-btn btn-retry"
-onclick="goHome()">確定</button></div>
-       </div>
-   </div>
- 
-   <div id="leaderboard-modal"
-class="modal-overlay">
-       <div class="modal-content" style="width: 800px;
-max-width: 95%;"> <h2 style="color: #4682b4;">🏆 排名榜 🏆</h2>
-           <div style="max-height: 400px; overflow-y: auto;">
-                <table
-class="lb-table">
+            </div>
+        </div>
+        
+        <button class="btn-start" onclick="startGame()">🚀 開始遊戲 (GO)</button>
+        <button class="btn-leaderboard" onclick="showLeaderboard()">🏆 查看排名榜</button>
+    </div>
+
+    <div id="game-screen">
+        <button class="back-btn" onclick="goHome()">🏠 結束</button>
+        <div class="game-header">
+            <div class="info-box"><span id="player-display"></span><span id="level-indicator" style="color: #555; margin-left: 5px;">Level 1</span></div>
+            <div class="info-box"><span class="icon">⏱️</span> <span id="timer">90</span><span style="margin-left:15px;" class="icon">⭐</span> <span id="score">0</span></div>
+        </div>
+        <div id="status-msg"></div>
+        <div class="target-display" id="target-char">A</div>
+        
+        <div class="keyboard" id="keyboard-ui">
+            <div id="tracer"></div>
+            <div class="row r1"><div class="key k-lp" id="key-q">Q</div><div class="key k-lr" id="key-w">W</div><div class="key k-lm" id="key-e">E</div><div class="key k-li" id="key-r">R</div><div class="key k-li" id="key-t">T</div><div class="key k-ri" id="key-y">Y</div><div class="key k-ri" id="key-u">U</div><div class="key k-rm" id="key-i">I</div><div class="key k-rr" id="key-o">O</div><div class="key k-rp" id="key-p">P</div></div>
+            <div class="row r2"><div class="key func caps" id="key-capslock">Caps</div><div class="key k-lp" id="key-a">A</div><div class="key k-lr" id="key-s">S</div><div class="key k-lm" id="key-d">D</div><div class="key k-li" id="key-f">F</div><div class="key k-li" id="key-g">G</div><div class="key k-ri" id="key-h">H</div><div class="key k-ri" id="key-j">J</div><div class="key k-rm" id="key-k">K</div><div class="key k-rr" id="key-l">L</div><div class="key k-rp" id="key-semicolon">;</div></div>
+            <div class="row r3"><div class="key func shift-l" id="key-shift-l">Shift</div><div class="key k-lp" id="key-z">Z</div><div class="key k-lr" id="key-x">X</div><div class="key k-lm" id="key-c">C</div><div class="key k-li" id="key-v">V</div><div class="key k-li" id="key-b">B</div><div class="key k-ri" id="key-n">N</div><div class="key k-ri" id="key-m">M</div><div class="key func shift-r" id="key-shift-r">Shift</div></div>
+            <div class="row r4" style="margin-left: 4u;"><div class="key space" id="key-space"></div></div>
+        </div>
+        
+        <div class="hands-container" id="hands-ui">
+            <div class="hand"><svg viewBox="0 0 200 200" preserveAspectRatio="xMidYMax meet"><path id="l-pinky" class="finger skin" d="M20,100 Q15,60 30,50 Q45,60 40,100 L40,140 L20,140 Z" /><path id="l-ring" class="finger skin" d="M50,100 Q45,40 65,30 Q85,40 80,100 L80,140 L50,140 Z" /><path id="l-middle" class="finger skin" d="M90,100 Q85,20 110,15 Q135,20 130,100 L130,140 L90,140 Z" /><path id="l-index" class="finger skin" d="M140,100 Q135,40 155,35 Q175,40 170,100 L170,140 L140,140 Z" /><path id="l-thumb" class="finger skin" d="M180,140 Q200,120 220,130 Q210,160 180,170 Z" transform="translate(-20,0)"/><path class="skin" d="M20,140 L170,140 Q160,190 95,190 Q30,190 20,140 Z" /></svg></div>
+            <div class="hand"><svg viewBox="0 0 200 200" preserveAspectRatio="xMidYMax meet"><path id="r-pinky" class="finger skin" d="M180,100 Q185,60 170,50 Q155,60 160,100 L160,140 L180,140 Z" /><path id="r-ring" class="finger skin" d="M150,100 Q155,40 135,30 Q115,40 120,100 L120,140 L150,140 Z" /><path id="r-middle" class="finger skin" d="M110,100 Q115,20 90,15 Q65,20 70,100 L70,140 L110,140 Z" /><path id="r-index" class="finger skin" d="M60,100 Q65,40 45,35 Q25,40 30,100 L30,140 L60,140 Z" /><path id="r-thumb" class="finger skin" d="M20,140 Q0,120 -20,130 Q-10,160 20,170 Z" transform="translate(40,0)"/><path class="skin" d="M180,140 L30,140 Q40,190 105,190 Q170,190 180,140 Z" /></svg></div>
+        </div>
+    </div>
+
+    <div id="result-modal" class="modal-overlay">
+        <div class="modal-content">
+            <h2>🎉 時間到！ 🎉</h2>
+            <div class="result-score" id="final-score">0</div>
+            <div><button class="modal-btn btn-retry" onclick="goHome()">確定</button></div>
+        </div>
+    </div>
+
+    <div id="leaderboard-modal" class="modal-overlay">
+        <div class="modal-content" style="width: 800px; max-width: 95%;"> <h2 style="color: #4682b4;">🏆 排名榜 🏆</h2>
+            <div style="max-height: 400px; overflow-y: auto;">
+                <table class="lb-table">
                     <thead>
                         <tr>
                             <th>排名</th><th>姓名</th><th>班別</th><th>級別</th><th>模式</th><th>時間</th><th>分數</th><th>錯字</th>
                         </tr>
                     </thead>
-                    <tbody
-id="lb-body"></tbody>
+                    <tbody id="lb-body"></tbody>
                 </table>
-           </div>
-           <button class="modal-btn btn-neutral"
-onclick="closeModal('leaderboard-modal')" style="width: 100%;
-margin-top: 15px;">關閉</button>
-       </div>
-   </div>
- 
-   <div id="admin-login-modal"
-class="modal-overlay">
-       <div class="modal-content" style="width:
-300px;">
-           <h3>🔑 老師專用區</h3>
-           <div class="admin-login-box">
-                <input
-type="email" id="admin-email" class="input-field"
-placeholder="Email" style="font-size: 16px; margin-bottom:
-10px;">
-                <input
-type="password" id="admin-pwd"
-class="input-field" placeholder="密碼 PW)" style="font-size:
-16px;">
-                <button
-class="modal-btn btn-primary" style="width:100%"
-onclick="verifyAdmin()">登入</button>
-                <button class="modal-btn
-btn-neutral" style="width:100%"
-onclick="closeModal('admin-login-modal')">取消</button>
-           </div>
-       </div>
-   </div>
- 
-   <div id="admin-panel-modal"
-class="modal-overlay">
-       <div class="modal-content" style="width: 850px;
-max-width: 95%;">
-           <h2 style="color: #4682b4; margin-top:0;">⚙️ 後台管理</h2>
-           
-           <div class="admin-tabs">
-                <button class="tab-btn
-active" onclick="switchAdminTab('exam')">📝 考試設定</button>
-                <button
-class="tab-btn" onclick="switchAdminTab('practice')">🎮 練習板面控制</button>
-                <button
-class="tab-btn" onclick="switchAdminTab('score')">📊 成績管理</button>
-           </div>
- 
-           <div id="tab-exam" class="tab-content active">
-               <div
-class="exam-settings-box">
-                    <label
-class="toggle-label" style="width: fit-content; margin-bottom:
-10px;">
-                        <input
-type="checkbox" id="admin-exam-active"> 啟用考試模式 (學生登入後強制進入)
+            </div>
+            <button class="modal-btn btn-neutral" onclick="closeModal('leaderboard-modal')" style="width: 100%; margin-top: 15px;">關閉</button>
+        </div>
+    </div>
+
+    <div id="admin-login-modal" class="modal-overlay">
+        <div class="modal-content" style="width: 300px;">
+            <h3>🔑 老師專用區</h3>
+            <div class="admin-login-box">
+                <input type="email" id="admin-email" class="input-field" placeholder="Email" style="font-size: 16px; margin-bottom: 10px;">
+                <input type="password" id="admin-pwd" class="input-field" placeholder="密碼 PW)" style="font-size: 16px;">
+                <button class="modal-btn btn-primary" style="width:100%" onclick="verifyAdmin()">登入</button>
+                <button class="modal-btn btn-neutral" style="width:100%" onclick="closeModal('admin-login-modal')">取消</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="admin-panel-modal" class="modal-overlay">
+        <div class="modal-content" style="width: 850px; max-width: 95%;">
+            <h2 style="color: #4682b4; margin-top:0;">⚙️ 後台管理</h2>
+            
+            <div class="admin-tabs">
+                <button class="tab-btn active" onclick="switchAdminTab('exam')">📝 考試設定</button>
+                <button class="tab-btn" onclick="switchAdminTab('practice')">🎮 練習板面控制</button>
+                <button class="tab-btn" onclick="switchAdminTab('score')">📊 成績管理</button>
+            </div>
+
+            <div id="tab-exam" class="tab-content active">
+                <div class="exam-settings-box">
+                    <label class="toggle-label" style="width: fit-content; margin-bottom: 10px;">
+                        <input type="checkbox" id="admin-exam-active"> 啟用考試模式 (學生登入後強制進入)
                     </label>
-                    <div
-class="setting-row">
+                    <div class="setting-row">
                         <span>出題模式：</span>
-                        <select
-id="admin-exam-preset" class="filter-select"
-onchange="loadExamPreset()">
-                            <option
-value="">-- 請選擇 --</option>
-                            <option
-value="1">Level 1 (中間排 - 隨機)</option>
-                            <option
-value="2">Level 2 (上排 - 隨機)</option>
-                            <option
-value="3">Level 3 (下排 - 隨機)</option>
-                            <option
-value="4">Level 4 (全鍵盤 - 隨機)</option>
-                            <option
-value="custom">自定內容 (固定文章)</option>
+                        <select id="admin-exam-preset" class="filter-select" onchange="loadExamPreset()">
+                            <option value="">-- 請選擇 --</option>
+                            <option value="1">Level 1 (中間排 - 隨機)</option>
+                            <option value="2">Level 2 (上排 - 隨機)</option>
+                            <option value="3">Level 3 (下排 - 隨機)</option>
+                            <option value="4">Level 4 (全鍵盤 - 隨機)</option>
+                            <option value="custom">自定內容 (固定文章)</option>
                         </select>
                     </div>
                     
-                    <div id="admin-casemode-wrapper"
-class="setting-row">
+                    <div id="admin-casemode-wrapper" class="setting-row">
                         <span>字母樣子：</span>
-                        <select
-id="admin-exam-casemode" class="filter-select">
-                            <option
-value="mixed">大小皆可</option>
+                        <select id="admin-exam-casemode" class="filter-select">
+                            <option value="mixed">大小皆可</option>
                             <option value="upper">大寫</option>
-                            <option
-value="lower">小寫</option>
-                            <option
-value="strict-mixed">大小寫混合地去打</option>
+                            <option value="lower">小寫</option>
+                            <option value="strict-mixed">大小寫混合地去打</option>
                         </select>
                     </div>
- 
-                    <div id="admin-content-wrapper"
-style="display:none;">
-                        <p
-style="margin:5px 0; font-size:14px; color:#666;">考試內容 (單字請用空白隔開)：</p>
-                        <textarea
-id="admin-exam-content" class="exam-input"
-placeholder="例如: Apple Banana Cat"></textarea>
+
+                    <div id="admin-content-wrapper" style="display:none;">
+                        <p style="margin:5px 0; font-size:14px; color:#666;">考試內容 (單字請用空白隔開)：</p>
+                        <textarea id="admin-exam-content" class="exam-input" placeholder="例如: Apple Banana Cat"></textarea>
                     </div>
                     
-                    <div
-class="setting-row">
+                    <div class="setting-row">
                         <span>時間：</span>
-                        <select
-id="admin-exam-time" class="filter-select">
+                        <select id="admin-exam-time" class="filter-select">
                             <option value="30">30秒</option>
-                            <option
-value="60">60秒</option>
-                            <option
-value="90">90秒</option>
-                            <option
-value="120">120秒</option>
-                            <option value="180">180秒</option>
-                            <option value="240">240秒</option>
-                            <option value="300">300秒</option>
+                            <option value="60">60秒</option>
+                            <option value="90">90秒</option>
+                            <option value="120">120秒</option>
                         </select>
                     </div>
                     
-                    <div
-class="setting-row">
-                        <label
-class="toggle-label"><input type="checkbox"
-id="admin-exam-nohints"> 關閉提示 (盲打)</label>
-                        <label
-class="toggle-label" style="margin-left:
-15px;"><input type="checkbox"
-id="admin-exam-nokeyboard"> 關閉鍵盤</label>
+                    <div class="setting-row">
+                        <label class="toggle-label"><input type="checkbox" id="admin-exam-nohints"> 關閉提示 (盲打)</label>
+                        <label class="toggle-label" style="margin-left: 15px;"><input type="checkbox" id="admin-exam-nokeyboard"> 關閉鍵盤</label>
                     </div>
-                    <button
-class="modal-btn btn-primary" style="width:100%;
-margin-top:10px; font-size: 18px;" onclick="saveExamSettings()">💾 儲存並生效</button>
-               </div>
-           </div>
- 
-           <div id="tab-practice" class="tab-content">
-                <div
-class="exam-settings-box">
-                    <p
-style="font-size:16px; color:#555; margin-bottom:15px;">控制學生在「練習模式」時的輔助功能：</p>
-                    <div
-class="setting-row">
-                        <label
-class="toggle-label">
-                            <input
-type="checkbox" id="admin-practice-nohints"> 關閉練習時打字的提示 (手部及鍵盤顏色)
+                    <button class="modal-btn btn-primary" style="width:100%; margin-top:10px; font-size: 18px;" onclick="saveExamSettings()">💾 儲存並生效</button>
+                </div>
+            </div>
+
+            <div id="tab-practice" class="tab-content">
+                <div class="exam-settings-box">
+                    <p style="font-size:16px; color:#555; margin-bottom:15px;">控制學生在「練習模式」時的輔助功能：</p>
+                    <div class="setting-row">
+                        <label class="toggle-label">
+                            <input type="checkbox" id="admin-practice-nohints"> 關閉練習時打字的提示 (手部及鍵盤顏色)
                         </label>
                     </div>
-                    <div
-class="setting-row">
-                        <label
-class="toggle-label">
-                            <input
-type="checkbox" id="admin-practice-nokeyboard"> 關閉練習時打字的鍵盤 (隱藏虛擬鍵盤)
+                    <div class="setting-row">
+                        <label class="toggle-label">
+                            <input type="checkbox" id="admin-practice-nokeyboard"> 關閉練習時打字的鍵盤 (隱藏虛擬鍵盤)
                         </label>
                     </div>
-                    <button
-class="modal-btn btn-primary" style="width:100%;
-margin-top:20px; font-size: 18px;"
-onclick="savePracticeSettings()">💾 儲存練習設定</button>
-               </div>
-           </div>
- 
-           <div id="tab-score" class="tab-content">
-                <div
-class="admin-filter-bar">
+                    <button class="modal-btn btn-primary" style="width:100%; margin-top:20px; font-size: 18px;" onclick="savePracticeSettings()">💾 儲存練習設定</button>
+                </div>
+            </div>
+
+            <div id="tab-score" class="tab-content">
+                <div class="admin-filter-bar">
                     <span>🔍 篩選：</span>
-                    <select
-id="filter-class" class="filter-select"
-onchange="renderAdminPanel()"><option value="">所有班別</option></select>
+                    <select id="filter-class" class="filter-select" onchange="renderAdminPanel()"><option value="">所有班別</option></select>
                     
-                    <select
-id="filter-level" class="filter-select"
-onchange="renderAdminPanel()">
-                        <option
-value="">所有級別</option>
-                        <option
-value="1">Lv.1</option>
-                        <option
-value="2">Lv.2</option>
-                        <option
-value="3">Lv.3</option>
-                        <option
-value="4">Lv.4</option>
-                        <option
-value="Exam">Exam</option>
+                    <select id="filter-level" class="filter-select" onchange="renderAdminPanel()">
+                        <option value="">所有級別</option>
+                        <option value="1">Lv.1</option>
+                        <option value="2">Lv.2</option>
+                        <option value="3">Lv.3</option>
+                        <option value="4">Lv.4</option>
+                        <option value="Exam">Exam</option>
                     </select>
- 
-                    <select
-id="filter-casemode" class="filter-select"
-onchange="renderAdminPanel()">
+
+                    <select id="filter-casemode" class="filter-select" onchange="renderAdminPanel()">
                          <option value="">所有樣子</option>
-                         <option
-value="mixed">大小皆可</option>
-                         <option
-value="upper">僅大寫</option>
-                         <option
-value="lower">僅小寫</option>
-                         <option
-value="strict-mixed">混合打</option>
+                         <option value="mixed">大小皆可</option>
+                         <option value="upper">僅大寫</option>
+                         <option value="lower">僅小寫</option>
+                         <option value="strict-mixed">混合打</option>
                     </select>
- 
-                    <select
-id="filter-time" class="filter-select"
-onchange="renderAdminPanel()">
-                        <option
-value="">所有時間</option>
-                        <option
-value="30">30秒</option>
-                        <option
-value="60">60秒</option>
-                        <option
-value="90">90秒</option>
-                        <option
-value="120">120秒</option>
-                        <option value="180">180秒</option>
-                        <option value="240">240秒</option>
-                        <option value="300">300秒</option>
+
+                    <select id="filter-time" class="filter-select" onchange="renderAdminPanel()">
+                        <option value="">所有時間</option>
+                        <option value="30">30秒</option>
+                        <option value="60">60秒</option>
+                        <option value="90">90秒</option>
+                        <option value="120">120秒</option>
                    </select>
- 
-                    <input
-type="date" id="filter-date" class="filter-select"
-onchange="renderAdminPanel()">
-                    <button
-class="modal-btn btn-neutral" style="font-size:12px; padding:
-5px 10px;" onclick="resetFilters()">重置</button>
+
+                    <input type="date" id="filter-date" class="filter-select" onchange="renderAdminPanel()">
+                    <button class="modal-btn btn-neutral" style="font-size:12px; padding: 5px 10px;" onclick="resetFilters()">重置</button>
                 </div>
                 
-                <div style="display:
-flex; gap: 10px; margin-bottom: 10px;">
-                    <button
-class="modal-btn btn-success" onclick="exportToExcel()">📥 匯出
-Excel</button>
-                    <div
-style="flex-grow: 1;"></div>
-                    <button
-class="modal-btn btn-danger" onclick="deleteSelected()">🗑️ 刪除選取</button>
-                    <button
-class="modal-btn btn-danger-solid"
-onclick="clearAllData()">⚠️ 清空所有</button>
+                <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                    <button class="modal-btn btn-success" onclick="exportToExcel()">📥 匯出 Excel</button>
+                    <div style="flex-grow: 1;"></div>
+                    <button class="modal-btn btn-danger" onclick="deleteSelected()">🗑️ 刪除選取</button>
+                    <button class="modal-btn btn-danger-solid" onclick="clearAllData()">⚠️ 清空所有</button>
                 </div>
- 
-                <div style="max-height:
-300px; overflow-y: auto; border: 1px solid #eee; border-radius: 10px;">
-                    <table
-class="lb-table">
-                       <thead><tr><th style="width:
-40px;"><input type="checkbox"
-onchange="toggleAll(this)"></th><th>班別</th><th>姓名</th><th>級別</th><th>模式</th><th>時間</th><th>分數</th><th>錯字</th><th>日期</th></tr></thead>
-                        <tbody
-id="admin-lb-body"></tbody>
+
+                <div style="max-height: 300px; overflow-y: auto; border: 1px solid #eee; border-radius: 10px;">
+                    <table class="lb-table">
+                        <thead><tr><th style="width: 40px;"><input type="checkbox" onchange="toggleAll(this)"></th><th>班別</th><th>姓名</th><th>級別</th><th>模式</th><th>時間</th><th>分數</th><th>錯字</th><th>日期</th></tr></thead>
+                        <tbody id="admin-lb-body"></tbody>
                     </table>
                 </div>
-           </div>
- 
-           <div style="display: flex; justify-content: space-between;
-align-items: center; margin-top: 15px;">
-                <button
-class="modal-btn btn-danger" onclick="logoutAdmin()">🚪 登出</button>
-                <button
-class="modal-btn btn-neutral"
-onclick="closeModal('admin-panel-modal')">關閉後台</button>
-           </div>
-       </div>
-   </div>
- 
-   <script type="module">
-       import { initializeApp } from
-"https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-       import { getAnalytics } from
-"https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics.js";
-       import { getAuth, signInWithEmailAndPassword, signOut } from
-"https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-       import { getFirestore, collection, addDoc, getDocs, doc, setDoc, getDoc,
-deleteDoc, query, orderBy, limit, writeBatch, serverTimestamp } from
-"https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
- 
-       const firebaseConfig = {
-           apiKey:
-"AIzaSyD-jemerwI_rHJLr2RQqYq69TqBrGuJTow",
-           authDomain: "p1typing-b154e.firebaseapp.com",
-           projectId: "p1typing-b154e",
-           storageBucket: "p1typing-b154e.firebasestorage.app",
-           messagingSenderId: "154914471400",
-           appId: "1:154914471400:web:754e2b5c1bc300dbb1385d",
-           measurementId: "G-XY6SZ4B8KS"
-       };
- 
-       const app = initializeApp(firebaseConfig);
-       const analytics = getAnalytics(app);
-       const auth = getAuth(app);
-       const db = getFirestore(app);
- 
-       // Global
-       let allRecords = [];
-       let examConfig = { isActive: false, content: "", time: 90,
-noHints: false, noKeyboard: false, caseMode: "mixed", levelMode:
-"custom" };
-       let practiceConfig = { noHints: false, noKeyboard: false };
- 
-       // --- Auth Functions ---
-       window.verifyAdmin = async function() {
-           const email = document.getElementById('admin-email').value;
-           const pwd = document.getElementById('admin-pwd').value;
-           if(!email || !pwd) return alert("請輸入 Email 和 密碼");
-           
-           try {
-                await
-signInWithEmailAndPassword(auth, email, pwd);
-               document.getElementById('admin-login-modal').style.display = 'none';
-               document.getElementById('admin-pwd').value = '';
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px;">
+                <button class="modal-btn btn-danger" onclick="logoutAdmin()">🚪 登出</button>
+                <button class="modal-btn btn-neutral" onclick="closeModal('admin-panel-modal')">關閉後台</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics.js";
+        import { getAuth, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, getDocs, doc, setDoc, getDoc, deleteDoc, query, orderBy, limit, writeBatch, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyD-jemerwI_rHJLr2RQqYq69TqBrGuJTow",
+            authDomain: "p1typing-b154e.firebaseapp.com",
+            projectId: "p1typing-b154e",
+            storageBucket: "p1typing-b154e.firebasestorage.app",
+            messagingSenderId: "154914471400",
+            appId: "1:154914471400:web:754e2b5c1bc300dbb1385d",
+            measurementId: "G-XY6SZ4B8KS"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // Global
+        let allRecords = [];
+        let examConfig = { isActive: false, content: "", time: 90, noHints: false, noKeyboard: false, caseMode: "mixed", levelMode: "custom" };
+        let practiceConfig = { noHints: false, noKeyboard: false };
+
+        // --- Auth Functions ---
+        window.verifyAdmin = async function() {
+            const email = document.getElementById('admin-email').value;
+            const pwd = document.getElementById('admin-pwd').value;
+            if(!email || !pwd) return alert("請輸入 Email 和 密碼");
+            
+            try {
+                await signInWithEmailAndPassword(auth, email, pwd);
+                document.getElementById('admin-login-modal').style.display = 'none';
+                document.getElementById('admin-pwd').value = '';
                 
-                await
-window.refreshAdminData();
+                await window.refreshAdminData();
                 window.loadAdminSettingsUI();
                 window.populateClassFilter(); 
                 window.renderAdminPanel(); 
                 
-               document.getElementById('admin-panel-modal').style.display = 'flex';
-           } catch (e) {
-                alert("登入失敗: " +
-e.message);
-           }
-       }
- 
-       window.logoutAdmin = async function() {
-           await signOut(auth);
-           document.getElementById('admin-panel-modal').style.display = 'none';
-       }
- 
-       // --- Firestore Functions ---
-        window.saveScoreToFirebase = async
-function(record) {
-           try { await addDoc(collection(db, "scores"), { ...record,
-timestamp: serverTimestamp() }); } 
-           catch (e) { console.error(e); }
-       };
- 
-       window.fetchLeaderboard = async function() {
-           try {
-                const q = query(collection(db,
-"scores"), orderBy("score", "desc"));
-                const querySnapshot = await
-getDocs(q);
+                document.getElementById('admin-panel-modal').style.display = 'flex';
+            } catch (e) {
+                alert("登入失敗: " + e.message);
+            }
+        }
+
+        window.logoutAdmin = async function() {
+            await signOut(auth);
+            document.getElementById('admin-panel-modal').style.display = 'none';
+        }
+
+        // --- Firestore Functions ---
+        window.saveScoreToFirebase = async function(record) {
+            try { await addDoc(collection(db, "scores"), { ...record, timestamp: serverTimestamp() }); } 
+            catch (e) { console.error(e); }
+        };
+
+        window.fetchLeaderboard = async function() {
+            try {
+                const q = query(collection(db, "scores"), orderBy("score", "desc"));
+                const querySnapshot = await getDocs(q);
                 let records = [];
-                querySnapshot.forEach((doc)
-=> records.push(doc.data()));
+                querySnapshot.forEach((doc) => records.push(doc.data()));
                 return records;
-           } catch (e) { console.error(e); return []; }
-       };
- 
-       window.fetchAllScores = async function() {
-           try {
-               const q = query(collection(db,
-"scores"), orderBy("timestamp", "desc"));
-                const querySnapshot = await
-getDocs(q);
+            } catch (e) { console.error(e); return []; }
+        };
+
+        window.fetchAllScores = async function() {
+            try {
+                const q = query(collection(db, "scores"), orderBy("timestamp", "desc"));
+                const querySnapshot = await getDocs(q);
                 allRecords = [];
-                querySnapshot.forEach((doc)
-=> allRecords.push({ id: doc.id, ...doc.data() }));
+                querySnapshot.forEach((doc) => allRecords.push({ id: doc.id, ...doc.data() }));
                 return allRecords;
-           } catch (e) { console.error(e); return []; }
-       };
- 
-       window.deleteScores = async function(ids) {
-           try {
+            } catch (e) { console.error(e); return []; }
+        };
+
+        window.deleteScores = async function(ids) {
+            try {
                 const batch = writeBatch(db);
                 ids.forEach(id => { 
-                    const ref = doc(db,
-"scores", String(id)); 
+                    const ref = doc(db, "scores", String(id)); 
                     batch.delete(ref);
                 });
                 await batch.commit();
                 return true;
-           } catch (e) { console.error(e); return false; }
-       };
- 
-       window.clearAllScores = async function() {
-           try {
-                const q = query(collection(db,
-"scores"), limit(500));
-                const snapshot = await
-getDocs(q);
+            } catch (e) { console.error(e); return false; }
+        };
+
+        window.clearAllScores = async function() {
+            try {
+                const q = query(collection(db, "scores"), limit(500));
+                const snapshot = await getDocs(q);
                 const batch = writeBatch(db);
-                snapshot.forEach((doc) =>
-batch.delete(doc.ref));
-                await batch.commit(); return
-true;
-           } catch (e) { console.error(e); return false; }
-       };
- 
-       window.fetchExamConfig = async function() {
-           try {
-                const docRef = doc(db,
-"settings", "examConfig");
-                const docSnap = await
-getDoc(docRef);
-                if (docSnap.exists())
-examConfig = docSnap.data();
-                else examConfig = { isActive:
-false, content: "", time: 90, noHints: false, noKeyboard: false,
-caseMode: "mixed", levelMode: "custom" };
+                snapshot.forEach((doc) => batch.delete(doc.ref));
+                await batch.commit(); return true;
+            } catch (e) { console.error(e); return false; }
+        };
+
+        window.fetchExamConfig = async function() {
+            try {
+                const docRef = doc(db, "settings", "examConfig");
+                const docSnap = await getDoc(docRef);
+                if (docSnap.exists()) examConfig = docSnap.data();
+                else examConfig = { isActive: false, content: "", time: 90, noHints: false, noKeyboard: false, caseMode: "mixed", levelMode: "custom" };
                 return examConfig;
-           } catch (e) { console.error(e); return { isActive: false }; }
-       };
-       
-       window.fetchPracticeConfig = async function() {
-           try {
-                const docRef = doc(db,
-"settings", "practiceConfig");
-                const docSnap = await
-getDoc(docRef);
-                if (docSnap.exists())
-practiceConfig = docSnap.data();
-                else practiceConfig = {
-noHints: false, noKeyboard: false };
+            } catch (e) { console.error(e); return { isActive: false }; }
+        };
+        
+        window.fetchPracticeConfig = async function() {
+            try {
+                const docRef = doc(db, "settings", "practiceConfig");
+                const docSnap = await getDoc(docRef);
+                if (docSnap.exists()) practiceConfig = docSnap.data();
+                else practiceConfig = { noHints: false, noKeyboard: false };
                 return practiceConfig;
-           } catch (e) { console.error(e); return { noHints: false, noKeyboard:
-false }; }
-       };
- 
-       window.saveExamConfigToFirebase = async function(config) {
-           try {
-                await setDoc(doc(db,
-"settings", "examConfig"), config);
-                examConfig = config;
-alert("考試設定已儲存！");
-           } catch (e) { console.error(e); alert("儲存失敗"); }
-       };
-       
-       window.savePracticeConfigToFirebase = async function(config) {
-           try {
-                await setDoc(doc(db,
-"settings", "practiceConfig"), config);
-                practiceConfig = config;
-alert("練習設定已儲存！");
-           } catch (e) { console.error(e); alert("儲存失敗"); }
-       };
- 
-       fetchExamConfig().then(cfg => console.log("Config
-loaded"));
-       fetchPracticeConfig().then(cfg => console.log("Practice Config
-loaded"));
- 
-       window.getExamConfig = () => examConfig;
-       window.getPracticeConfig = () => practiceConfig;
-       window.getAllRecords = () => allRecords;
-       window.refreshAdminData = fetchAllScores;
-       window.loadAdminSettingsUI = () => {
-           const c = examConfig;
-           document.getElementById('admin-exam-active').checked =
-c.isActive||false;
-           document.getElementById('admin-exam-content').value =
-c.content||"";
-           document.getElementById('admin-exam-time').value =
-c.time||"90";
-           document.getElementById('admin-exam-nohints').checked
-= c.noHints||false;
-           document.getElementById('admin-exam-nokeyboard').checked =
-c.noKeyboard||false;
-           document.getElementById('admin-exam-casemode').value = c.caseMode ||
-"mixed";
-           document.getElementById('admin-exam-preset').value = c.levelMode ||
-"custom";
-           
-           const p = practiceConfig;
-           document.getElementById('admin-practice-nohints').checked = p.noHints ||
-false;
-           document.getElementById('admin-practice-nokeyboard').checked =
-p.noKeyboard || false;
-           
-           window.loadExamPreset(); 
-       };
-   </script>
- 
-   <script>
-        const levels = {
-1:['a','s','d','f','g','h','j','k','l',';'],
-2:['q','w','e','r','t','y','u','i','o','p'], 3:['z','x','c','v','b','n','m'],
-4:['q','w','e','r','t','y','u','i','o','p','a','s','d','f','g','h','j','k','l',';','z','x','c','v','b','n','m']
-};
-       const homeRowMap =
-{'q':'a','w':'s','e':'d','r':'f','t':'f','y':'j','u':'j','i':'k','o':'l','p':';','z':'a','x':'s','c':'d','v':'f','b':'f','n':'j','m':'j','g':'f','h':'j'};
-       const fingerMapping = {'l-pinky':['q','a','z'],'l-ring':['w','s','x'],'l-middle':['e','d','c'],'l-index':['r','f','v','t','g','b'],'r-index':['y','h','n','u','j','m'],'r-middle':['i','k'],'r-ring':['o','l'],'r-pinky':['p',';'],'l-thumb':['
-'],'r-thumb':[' ']};
-       
-       const leftHandKeysSet = new Set(['q','w','e','r','t','a','s','d','f','g','z','x','c','v','b']);
- 
-       let currentUser = { name: '', classVal: '' };
-       let selectedCaseMode = 'mixed';
-       let selectedLevel = 1;
-       let selectedTime = 90;
-       let timeLeft = 90;
-       let currentTarget = '';
-       let score = 0;
-       let mistakeCount = 0; 
-       let isGameRunning = false;
-       let isCapsLockOn = false; 
-       let timerInterval = null;
-       
-       let isExamMode = false;
-       let isRandomExam = false; 
-       let examContentArray = [];
-       let examWordIndex = 0;
-       let examCharIndex = 0;
- 
-       async function enterSetup() {
-           const name = document.getElementById('input-name').value.trim();
-           const classVal = document.getElementById('input-class').value.trim();
-           if (!name || !classVal) { alert("請輸入姓名和班別喔！"); return; }
-           currentUser.name = name; currentUser.classVal = classVal;
-           
-           document.getElementById('login-screen').style.display = 'none';
-           const config = window.getExamConfig ? window.getExamConfig() : {
-isActive: false };
- 
-           if (config.isActive) {
-               document.getElementById('exam-entry-screen').style.display = 'flex';
+            } catch (e) { console.error(e); return { noHints: false, noKeyboard: false }; }
+        };
+
+        window.saveExamConfigToFirebase = async function(config) {
+            try {
+                await setDoc(doc(db, "settings", "examConfig"), config);
+                examConfig = config; alert("考試設定已儲存！");
+            } catch (e) { console.error(e); alert("儲存失敗"); }
+        };
+        
+        window.savePracticeConfigToFirebase = async function(config) {
+            try {
+                await setDoc(doc(db, "settings", "practiceConfig"), config);
+                practiceConfig = config; alert("練習設定已儲存！");
+            } catch (e) { console.error(e); alert("儲存失敗"); }
+        };
+
+        fetchExamConfig().then(cfg => console.log("Config loaded"));
+        fetchPracticeConfig().then(cfg => console.log("Practice Config loaded"));
+
+        window.getExamConfig = () => examConfig;
+        window.getPracticeConfig = () => practiceConfig;
+        window.getAllRecords = () => allRecords;
+        window.refreshAdminData = fetchAllScores;
+        window.loadAdminSettingsUI = () => {
+            const c = examConfig;
+            document.getElementById('admin-exam-active').checked = c.isActive||false;
+            document.getElementById('admin-exam-content').value = c.content||"";
+            document.getElementById('admin-exam-time').value = c.time||"90";
+            document.getElementById('admin-exam-nohints').checked = c.noHints||false;
+            document.getElementById('admin-exam-nokeyboard').checked = c.noKeyboard||false;
+            document.getElementById('admin-exam-casemode').value = c.caseMode || "mixed";
+            document.getElementById('admin-exam-preset').value = c.levelMode || "custom";
+            
+            const p = practiceConfig;
+            document.getElementById('admin-practice-nohints').checked = p.noHints || false;
+            document.getElementById('admin-practice-nokeyboard').checked = p.noKeyboard || false;
+            
+            window.loadExamPreset(); 
+        };
+    </script>
+
+    <script>
+        const levels = { 1:['a','s','d','f','g','h','j','k','l',';'], 2:['q','w','e','r','t','y','u','i','o','p'], 3:['z','x','c','v','b','n','m'], 4:['q','w','e','r','t','y','u','i','o','p','a','s','d','f','g','h','j','k','l',';','z','x','c','v','b','n','m'] };
+        const homeRowMap = {'q':'a','w':'s','e':'d','r':'f','t':'f','y':'j','u':'j','i':'k','o':'l','p':';','z':'a','x':'s','c':'d','v':'f','b':'f','n':'j','m':'j','g':'f','h':'j'};
+        const fingerMapping = {'l-pinky':['q','a','z'],'l-ring':['w','s','x'],'l-middle':['e','d','c'],'l-index':['r','f','v','t','g','b'],'r-index':['y','h','n','u','j','m'],'r-middle':['i','k'],'r-ring':['o','l'],'r-pinky':['p',';'],'l-thumb':[' '],'r-thumb':[' ']};
+        
+        const leftHandKeysSet = new Set(['q','w','e','r','t','a','s','d','f','g','z','x','c','v','b']);
+
+        let currentUser = { name: '', classVal: '' };
+        let selectedCaseMode = 'mixed';
+        let selectedLevel = 1;
+        let selectedTime = 90;
+        let timeLeft = 90;
+        let currentTarget = '';
+        let score = 0;
+        let mistakeCount = 0; 
+        let isGameRunning = false;
+        let isCapsLockOn = false; 
+        let timerInterval = null;
+        
+        let isExamMode = false;
+        let isRandomExam = false; 
+        let examContentArray = [];
+        let examWordIndex = 0;
+        let examCharIndex = 0;
+
+        async function enterSetup() {
+            const name = document.getElementById('input-name').value.trim();
+            const classVal = document.getElementById('input-class').value.trim();
+            if (!name || !classVal) { alert("請輸入姓名和班別喔！"); return; }
+            currentUser.name = name; currentUser.classVal = classVal;
+            
+            document.getElementById('login-screen').style.display = 'none';
+            const config = window.getExamConfig ? window.getExamConfig() : { isActive: false };
+
+            if (config.isActive) {
+                document.getElementById('exam-entry-screen').style.display = 'flex';
                 isExamMode = true;
-           } else {
-               document.getElementById('setup-screen').style.display = 'flex';
+            } else {
+                document.getElementById('setup-screen').style.display = 'flex';
                 isExamMode = false;
-           }
-       }
- 
-       function startExam() {
-           const config = window.getExamConfig();
+            }
+        }
+
+        function startExam() {
+            const config = window.getExamConfig();
             selectedTime = parseInt(config.time);
-           selectedCaseMode = config.caseMode || 'mixed';
-           
-           const mode = config.levelMode || 'custom';
-           
-           if (mode === 'custom') {
+            selectedCaseMode = config.caseMode || 'mixed';
+            
+            const mode = config.levelMode || 'custom';
+            
+            if (mode === 'custom') {
                 isRandomExam = false;
-                let content = config.content ||
-"Apple Banana Cat";
-                examContentArray =
-content.trim().split(/\s+/); 
-                if(examContentArray.length ===
-0) examContentArray = ['Apple'];
+                let content = config.content || "Apple Banana Cat";
+                examContentArray = content.trim().split(/\s+/); 
+                if(examContentArray.length === 0) examContentArray = ['Apple'];
                 
-                examWordIndex = 0;
-examCharIndex = 0;
-           } else {
+                examWordIndex = 0; examCharIndex = 0;
+            } else {
                 isRandomExam = true;
-                selectedLevel = parseInt(mode);
-           }
- 
-           const kb = document.getElementById('keyboard-ui');
-            const hands =
-document.getElementById('hands-ui');
-           if (config.noKeyboard) { kb.classList.add('hidden');
-hands.classList.add('hidden'); } 
-           else { kb.classList.remove('hidden'); hands.classList.remove('hidden');
-}
- 
-           score = 0; mistakeCount = 0; timeLeft = selectedTime; isGameRunning =
-true;
-           document.getElementById('result-modal').style.display = 'none';
-           document.getElementById('exam-entry-screen').style.display = 'none';
-           document.getElementById('game-screen').style.display = 'flex';
-           document.getElementById('level-indicator').innerText = isRandomExam ?
-"考試: Lv" + selectedLevel : "考試模式";
-           document.getElementById('player-display').innerText =
-`${currentUser.classVal} - ${currentUser.name}`;
-           document.getElementById('timer').innerText = timeLeft;
-           updateScore();
- 
-           if (audioCtx.state === 'suspended') audioCtx.resume();
-           checkCapsLockState(new KeyboardEvent('keydown')); 
-           nextChar(); 
- 
-           if(timerInterval) clearInterval(timerInterval);
-           timerInterval = setInterval(() => {
-                timeLeft--;
-document.getElementById('timer').innerText = timeLeft;
+                selectedLevel = parseInt(mode); 
+            }
+
+            const kb = document.getElementById('keyboard-ui');
+            const hands = document.getElementById('hands-ui');
+            if (config.noKeyboard) { kb.classList.add('hidden'); hands.classList.add('hidden'); } 
+            else { kb.classList.remove('hidden'); hands.classList.remove('hidden'); }
+
+            score = 0; mistakeCount = 0; timeLeft = selectedTime; isGameRunning = true;
+            document.getElementById('result-modal').style.display = 'none';
+            document.getElementById('exam-entry-screen').style.display = 'none';
+            document.getElementById('game-screen').style.display = 'flex';
+            document.getElementById('level-indicator').innerText = isRandomExam ? "考試: Lv" + selectedLevel : "考試模式";
+            document.getElementById('player-display').innerText = `${currentUser.classVal} - ${currentUser.name}`;
+            document.getElementById('timer').innerText = timeLeft;
+            updateScore();
+
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            checkCapsLockState(new KeyboardEvent('keydown')); 
+            nextChar(); 
+
+            if(timerInterval) clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                timeLeft--; document.getElementById('timer').innerText = timeLeft;
                 if (timeLeft <= 0) endGame();
-           }, 1000);
-       }
- 
-       function startGame() {
-           isExamMode = false;
-           isRandomExam = false;
-           
-           const pConfig = window.getPracticeConfig ? window.getPracticeConfig() :
-{};
-           const kb = document.getElementById('keyboard-ui');
-           const hands = document.getElementById('hands-ui');
-           
-           if (pConfig.noKeyboard) { 
+            }, 1000);
+        }
+
+        function startGame() {
+            isExamMode = false;
+            isRandomExam = false;
+            
+            const pConfig = window.getPracticeConfig ? window.getPracticeConfig() : {};
+            const kb = document.getElementById('keyboard-ui');
+            const hands = document.getElementById('hands-ui');
+            
+            if (pConfig.noKeyboard) { 
                 kb.classList.add('hidden'); 
                 hands.classList.add('hidden'); 
             } else { 
                 kb.classList.remove('hidden'); 
-               hands.classList.remove('hidden'); 
-           }
- 
-           score = 0; mistakeCount = 0; timeLeft = selectedTime; isGameRunning =
-true;
-           document.getElementById('result-modal').style.display = 'none';
-           document.getElementById('setup-screen').style.display = 'none';
-           document.getElementById('game-screen').style.display = 'flex';
-           const titles = {1:"Level 1",2:"Level
-2",3:"Level 3",4:"Level 4"};
-           document.getElementById('level-indicator').innerText =
-titles[selectedLevel];
-           document.getElementById('player-display').innerText =
-`${currentUser.classVal} - ${currentUser.name}`;
-           document.getElementById('timer').innerText = timeLeft;
-           updateScore();
-           if (audioCtx.state === 'suspended') audioCtx.resume();
-           checkCapsLockState(new KeyboardEvent('keydown')); 
+                hands.classList.remove('hidden'); 
+            }
+
+            score = 0; mistakeCount = 0; timeLeft = selectedTime; isGameRunning = true;
+            document.getElementById('result-modal').style.display = 'none';
+            document.getElementById('setup-screen').style.display = 'none';
+            document.getElementById('game-screen').style.display = 'flex';
+            const titles = {1:"Level 1",2:"Level 2",3:"Level 3",4:"Level 4"};
+            document.getElementById('level-indicator').innerText = titles[selectedLevel];
+            document.getElementById('player-display').innerText = `${currentUser.classVal} - ${currentUser.name}`;
+            document.getElementById('timer').innerText = timeLeft;
+            updateScore();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            checkCapsLockState(new KeyboardEvent('keydown')); 
             nextChar();
-           if(timerInterval) clearInterval(timerInterval);
-           timerInterval = setInterval(() => {
-                timeLeft--;
-document.getElementById('timer').innerText = timeLeft;
-                if (timeLeft <= 0)
-endGame();
-           }, 1000);
-       }
- 
-       function endGame() {
-           isGameRunning = false; clearInterval(timerInterval);
-           const now = new Date();
-           const dateStr =
-now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0');
-           
-           // 記錄 caseMode 和 timeMode
-           const record = { 
+            if(timerInterval) clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                timeLeft--; document.getElementById('timer').innerText = timeLeft;
+                if (timeLeft <= 0) endGame();
+            }, 1000);
+        }
+
+        function endGame() {
+            isGameRunning = false; clearInterval(timerInterval);
+            const now = new Date();
+            const dateStr = now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0');
+            
+            // 記錄 caseMode 和 timeMode
+            const record = { 
                 name: currentUser.name, 
                 class: currentUser.classVal, 
-                level: isExamMode ?
-"Exam" : selectedLevel, 
+                level: isExamMode ? "Exam" : selectedLevel, 
                 score: score, 
                 mistakes: mistakeCount, 
-                caseMode: isExamMode ? 'Exam' :
-selectedCaseMode, // 記錄字母樣子
+                caseMode: isExamMode ? 'Exam' : selectedCaseMode, // 記錄字母樣子
                 timeMode: selectedTime,  // 記錄時間
                 date: now.toLocaleString(), 
                 filterDate: dateStr 
-           };
-           
-           if(window.saveScoreToFirebase) window.saveScoreToFirebase(record);
-           document.getElementById('final-score').innerText = score;
-           document.getElementById('result-modal').style.display = 'flex';
-       }
- 
-       function goHome() {
-           isGameRunning = false; clearInterval(timerInterval);
-           document.getElementById('result-modal').style.display = 'none';
-           document.getElementById('game-screen').style.display = 'none';
-           if (isExamMode) location.reload(); 
-           else document.getElementById('setup-screen').style.display = 'flex';
-       }
- 
-       function nextChar() {
-           if (!isGameRunning) return;
-           
-           if (isExamMode && !isRandomExam) {
-                if (examWordIndex >=
-examContentArray.length) examWordIndex = 0;
-                let currentWord =
-examContentArray[examWordIndex];
-                if (examCharIndex >=
-currentWord.length) {
-                    examWordIndex++;
-examCharIndex = 0;
-                    if (examWordIndex >=
-examContentArray.length) examWordIndex = 0;
-                    currentWord =
-examContentArray[examWordIndex];
+            };
+            
+            if(window.saveScoreToFirebase) window.saveScoreToFirebase(record);
+            document.getElementById('final-score').innerText = score;
+            document.getElementById('result-modal').style.display = 'flex';
+        }
+
+        function goHome() {
+            isGameRunning = false; clearInterval(timerInterval);
+            document.getElementById('result-modal').style.display = 'none';
+            document.getElementById('game-screen').style.display = 'none';
+            if (isExamMode) location.reload(); 
+            else document.getElementById('setup-screen').style.display = 'flex';
+        }
+
+        function nextChar() {
+            if (!isGameRunning) return;
+            
+            if (isExamMode && !isRandomExam) {
+                if (examWordIndex >= examContentArray.length) examWordIndex = 0;
+                let currentWord = examContentArray[examWordIndex];
+                if (examCharIndex >= currentWord.length) {
+                    examWordIndex++; examCharIndex = 0;
+                    if (examWordIndex >= examContentArray.length) examWordIndex = 0;
+                    currentWord = examContentArray[examWordIndex];
                 }
-                currentTarget =
-currentWord[examCharIndex];
-                updateExamDisplay(currentWord,
-examCharIndex);
-           } else {
-                const chars =
-levels[selectedLevel];
-                let char =
-chars[Math.floor(Math.random() * chars.length)];
+                currentTarget = currentWord[examCharIndex];
+                updateExamDisplay(currentWord, examCharIndex);
+            } else {
+                const chars = levels[selectedLevel];
+                let char = chars[Math.floor(Math.random() * chars.length)];
                 
-                if (selectedCaseMode ===
-'mixed') {
+                if (selectedCaseMode === 'mixed') {
                     char = char.toLowerCase();
                     currentTarget = char; 
-                } else if (selectedCaseMode ===
-'strict-mixed') {
+                } else if (selectedCaseMode === 'strict-mixed') {
                     const isUpper = Math.random() < 0.5;
-                    currentTarget = isUpper ?
-char.toUpperCase() : char.toLowerCase();
-                } else if (selectedCaseMode ===
-'upper') {
+                    currentTarget = isUpper ? char.toUpperCase() : char.toLowerCase();
+                } else if (selectedCaseMode === 'upper') {
                     char = char.toUpperCase();
                     currentTarget = char;
-                } else if (selectedCaseMode ===
-'lower') {
+                } else if (selectedCaseMode === 'lower') {
                     char = char.toLowerCase();
                     currentTarget = char;
                 }
                 
-                const display =
-document.getElementById('target-char');
-                if (selectedCaseMode ===
-'mixed') display.innerText = char.toUpperCase();
-                else display.innerText =
-currentTarget;
-           }
-           const d = document.getElementById('target-char');
-           d.classList.remove('bounce', 'shake');
-           highlightInterface();
-       }
- 
-       function updateExamDisplay(word, idx) {
-           const display = document.getElementById('target-char');
-           let html = "";
-           for (let i = 0; i < word.length; i++) {
-                if (i < idx) html +=
-`<span class="char-done">${word[i]}</span>`;
-                else if (i === idx) html +=
-`<span class="char-current">${word[i]}</span>`;
-                else html += `<span
-class="char-todo">${word[i]}</span>`;
-           }
-           display.innerHTML = html;
-       }
- 
-       function highlightInterface() {
-           const config = window.getExamConfig ? window.getExamConfig() : {};
-           const pConfig = window.getPracticeConfig ? window.getPracticeConfig() :
-{};
-           
-           let hideHints = false;
-           if (isExamMode) {
-                if (config.noHints ||
-config.noKeyboard) hideHints = true;
-           } else {
-                if (pConfig.noHints ||
-pConfig.noKeyboard) hideHints = true;
-           }
- 
-           if (hideHints) {
-               document.querySelectorAll('.key').forEach(k =>
-k.classList.remove('active'));
-               document.querySelectorAll('.finger').forEach(f =>
-f.classList.remove('active'));
-                const tracer =
-document.getElementById('tracer');
-                if(tracer)
-tracer.classList.remove('animating');
+                const display = document.getElementById('target-char');
+                if (selectedCaseMode === 'mixed') display.innerText = char.toUpperCase();
+                else display.innerText = currentTarget;
+            }
+            const d = document.getElementById('target-char');
+            d.classList.remove('bounce', 'shake');
+            highlightInterface();
+        }
+
+        function updateExamDisplay(word, idx) {
+            const display = document.getElementById('target-char');
+            let html = "";
+            for (let i = 0; i < word.length; i++) {
+                if (i < idx) html += `<span class="char-done">${word[i]}</span>`;
+                else if (i === idx) html += `<span class="char-current">${word[i]}</span>`;
+                else html += `<span class="char-todo">${word[i]}</span>`;
+            }
+            display.innerHTML = html;
+        }
+
+        function highlightInterface() {
+            const config = window.getExamConfig ? window.getExamConfig() : {};
+            const pConfig = window.getPracticeConfig ? window.getPracticeConfig() : {};
+            
+            let hideHints = false;
+            if (isExamMode) {
+                if (config.noHints || config.noKeyboard) hideHints = true;
+            } else {
+                if (pConfig.noHints || pConfig.noKeyboard) hideHints = true;
+            }
+
+            if (hideHints) {
+                document.querySelectorAll('.key').forEach(k => k.classList.remove('active'));
+                document.querySelectorAll('.finger').forEach(f => f.classList.remove('active'));
+                const tracer = document.getElementById('tracer');
+                if(tracer) tracer.classList.remove('animating');
                 return;
-           }
- 
-           if (!currentTarget) return;
-           const lowerChar = currentTarget.toLowerCase();
-           let isUpper = (currentTarget !== lowerChar) && (currentTarget
-!== ';') && (currentTarget !== ' ');
-           
-           if ((!isExamMode || isRandomExam) && selectedCaseMode === 'mixed')
-isUpper = false;
- 
-           document.querySelectorAll('.key').forEach(k =>
-k.classList.remove('active'));
-           document.querySelectorAll('.finger').forEach(f =>
-f.classList.remove('active'));
-           const tracer = document.getElementById('tracer');
-           tracer.classList.remove('animating');
- 
-           let tid = 'key-' + lowerChar; if(lowerChar===';') tid = 'key-semicolon';
-if(lowerChar===' ') tid = 'key-space';
-           const targetEl = document.getElementById(tid);
-           const capsEl =
-document.getElementById('key-capslock');
- 
-           if (selectedCaseMode === 'strict-mixed' && isUpper) {
+            }
+
+            if (!currentTarget) return;
+            const lowerChar = currentTarget.toLowerCase();
+            let isUpper = (currentTarget !== lowerChar) && (currentTarget !== ';') && (currentTarget !== ' ');
+            
+            if ((!isExamMode || isRandomExam) && selectedCaseMode === 'mixed') isUpper = false;
+
+            document.querySelectorAll('.key').forEach(k => k.classList.remove('active'));
+            document.querySelectorAll('.finger').forEach(f => f.classList.remove('active'));
+            const tracer = document.getElementById('tracer');
+            tracer.classList.remove('animating');
+
+            let tid = 'key-' + lowerChar; if(lowerChar===';') tid = 'key-semicolon'; if(lowerChar===' ') tid = 'key-space';
+            const targetEl = document.getElementById(tid);
+            const capsEl = document.getElementById('key-capslock');
+
+            if (selectedCaseMode === 'strict-mixed' && isUpper) {
                 if(targetEl) {
-                   targetEl.classList.add('active'); 
+                    targetEl.classList.add('active'); 
                     startTracer(lowerChar, targetEl);
                 }
- 
-                if
-(leftHandKeysSet.has(lowerChar)) {
-                   document.getElementById('key-shift-r').classList.add('active');
-                   document.getElementById('r-pinky').classList.add('active');
-               } else {
-                   document.getElementById('key-shift-l').classList.add('active');
-                   document.getElementById('l-pinky').classList.add('active');
+
+                if (leftHandKeysSet.has(lowerChar)) {
+                    document.getElementById('key-shift-r').classList.add('active');
+                    document.getElementById('r-pinky').classList.add('active');
+                } else {
+                    document.getElementById('key-shift-l').classList.add('active');
+                    document.getElementById('l-pinky').classList.add('active');
                 }
                 
                 highlightFinger(lowerChar);
                 return; 
-           }
- 
-           if(!isUpper || (isExamMode && !isRandomExam &&
-currentTarget === lowerChar)) {
+            }
+
+            if(!isUpper || (isExamMode && !isRandomExam && currentTarget === lowerChar)) {
                 if(targetEl) { 
-                   targetEl.classList.add('active'); 
-                    if (lowerChar !== ' ') {
-startTracer(lowerChar, targetEl); highlightFinger(lowerChar); } 
-                    else {
-document.getElementById('l-thumb').classList.add('active');
-document.getElementById('r-thumb').classList.add('active'); }
+                    targetEl.classList.add('active'); 
+                    if (lowerChar !== ' ') { startTracer(lowerChar, targetEl); highlightFinger(lowerChar); } 
+                    else { document.getElementById('l-thumb').classList.add('active'); document.getElementById('r-thumb').classList.add('active'); }
                 }
                 return;
-           }
- 
-           if(isUpper) {
-                if(isCapsLockOn) { if(targetEl)
-{ targetEl.classList.add('active'); startTracer(lowerChar, targetEl);
-highlightFinger(lowerChar); } } 
-               else { if(capsEl) {
-capsEl.classList.add('active');
-document.getElementById('l-pinky').classList.add('active');
-startTracer('capslock', capsEl); } }
+            }
+
+            if(isUpper) {
+                if(isCapsLockOn) { if(targetEl) { targetEl.classList.add('active'); startTracer(lowerChar, targetEl); highlightFinger(lowerChar); } } 
+                else { if(capsEl) { capsEl.classList.add('active'); document.getElementById('l-pinky').classList.add('active'); startTracer('capslock', capsEl); } }
                 return;
-           }
-       }
- 
-       function startTracer(char, el) {
-           const config = window.getExamConfig ? window.getExamConfig() : {};
-           const pConfig = window.getPracticeConfig ? window.getPracticeConfig() :
-{};
-           
-           let hideHints = false;
-           if (isExamMode) {
-                if (config.noHints ||
-config.noKeyboard) hideHints = true;
-           } else {
-                if (pConfig.noHints ||
-pConfig.noKeyboard) hideHints = true;
-           }
-           
-           if (hideHints) return;
-           
-           const tracer = document.getElementById('tracer');
-           if(!tracer) return;
- 
-           let homeChar = homeRowMap[char]; if(char==='capslock') homeChar='a';
-if(!homeChar || homeChar===char) return;
-           let hid = 'key-'+homeChar; if(homeChar===';') hid='key-semicolon';
-           const home = document.getElementById(hid);
-           const kb = document.getElementById('keyboard-ui');
- 
-           if(home && el && kb) {
-                const kRect =
-kb.getBoundingClientRect();
-                const hRect =
-home.getBoundingClientRect();
-                const tRect =
-el.getBoundingClientRect();
+            }
+        }
+
+        function startTracer(char, el) {
+            const config = window.getExamConfig ? window.getExamConfig() : {};
+            const pConfig = window.getPracticeConfig ? window.getPracticeConfig() : {};
+            
+            let hideHints = false;
+            if (isExamMode) {
+                if (config.noHints || config.noKeyboard) hideHints = true;
+            } else {
+                if (pConfig.noHints || pConfig.noKeyboard) hideHints = true;
+            }
+            
+            if (hideHints) return;
+            
+            const tracer = document.getElementById('tracer');
+            if(!tracer) return;
+
+            let homeChar = homeRowMap[char]; if(char==='capslock') homeChar='a'; if(!homeChar || homeChar===char) return;
+            let hid = 'key-'+homeChar; if(homeChar===';') hid='key-semicolon';
+            const home = document.getElementById(hid);
+            const kb = document.getElementById('keyboard-ui');
+
+            if(home && el && kb) {
+                const kRect = kb.getBoundingClientRect();
+                const hRect = home.getBoundingClientRect();
+                const tRect = el.getBoundingClientRect();
                 const r = tracer.offsetWidth/2;
- 
-                const x1 = hRect.left -
-kRect.left + hRect.width/2 - r;
-                const y1 = hRect.top -
-kRect.top + hRect.height/2 - r;
-                const x2 = tRect.left -
-kRect.left + tRect.width/2 - r;
-                const y2 = tRect.top -
-kRect.top + tRect.height/2 - r;
- 
-               tracer.style.setProperty('--x1', `${x1}px`);
-                tracer.style.setProperty('--y1',
-`${y1}px`);
-               tracer.style.setProperty('--x2', `${x2}px`);
-               tracer.style.setProperty('--y2', `${y2}px`);
+
+                const x1 = hRect.left - kRect.left + hRect.width/2 - r;
+                const y1 = hRect.top - kRect.top + hRect.height/2 - r;
+                const x2 = tRect.left - kRect.left + tRect.width/2 - r;
+                const y2 = tRect.top - kRect.top + tRect.height/2 - r;
+
+                tracer.style.setProperty('--x1', `${x1}px`);
+                tracer.style.setProperty('--y1', `${y1}px`);
+                tracer.style.setProperty('--x2', `${x2}px`);
+                tracer.style.setProperty('--y2', `${y2}px`);
                 
                 void tracer.offsetWidth; 
-               tracer.classList.add('animating');
-           }
-       }
- 
-       // 修改：學生排名榜顯示邏輯
-       async function showLeaderboard() {
-           const tbody = document.getElementById('lb-body'); tbody.innerHTML =
-'<tr><td colspan="8">載入中...</td></tr>';
-           document.getElementById('leaderboard-modal').style.display = 'flex';
-           if(window.fetchLeaderboard) {
-                const records = await
-window.fetchLeaderboard();
+                tracer.classList.add('animating');
+            }
+        }
+
+        // 修改：學生排名榜顯示邏輯
+        async function showLeaderboard() {
+            const tbody = document.getElementById('lb-body'); tbody.innerHTML = '<tr><td colspan="8">載入中...</td></tr>';
+            document.getElementById('leaderboard-modal').style.display = 'flex';
+            if(window.fetchLeaderboard) {
+                const records = await window.fetchLeaderboard();
                 tbody.innerHTML = '';
-                if(records.length === 0)
-tbody.innerHTML = '<tr><td colspan="8">暫無紀錄</td></tr>';
+                if(records.length === 0) tbody.innerHTML = '<tr><td colspan="8">暫無紀錄</td></tr>';
                 else {
-                    const caseMap = { 'mixed':
-'大小皆可', 'upper': '僅大寫', 'lower': '僅小寫', 'strict-mixed': '混合打', 'Exam': 'Exam' };
-                    records.forEach((rec,
-index) => {
-                        let rankHTML = index+1;
-if(index==0) rankHTML='🥇'; else
-if(index==1) rankHTML='🥈'; else
-if(index==2) rankHTML='🥉';
+                    const caseMap = { 'mixed': '大小皆可', 'upper': '僅大寫', 'lower': '僅小寫', 'strict-mixed': '混合打', 'Exam': 'Exam' };
+                    records.forEach((rec, index) => {
+                        let rankHTML = index+1; if(index==0) rankHTML='🥇'; else if(index==1) rankHTML='🥈'; else if(index==2) rankHTML='🥉';
                         
                         // 處理欄位顯示
-                        const displayMode =
-caseMap[rec.caseMode] || rec.caseMode || '-';
-                        const displayTime =
-rec.timeMode ? rec.timeMode + 's' : '-';
- 
-                        tbody.innerHTML +=
-`<tr><td>${rankHTML}</td><td>${rec.name}</td><td>${rec.class}</td><td>${rec.level==='Exam'?'📝':('Lv.'+rec.level)}</td><td>${displayMode}</td><td>${displayTime}</td><td
-style="font-weight:bold;">${rec.score}</td><td>${rec.mistakes
-|| 0}</td></tr>`;
+                        const displayMode = caseMap[rec.caseMode] || rec.caseMode || '-';
+                        const displayTime = rec.timeMode ? rec.timeMode + 's' : '-';
+
+                        tbody.innerHTML += `<tr><td>${rankHTML}</td><td>${rec.name}</td><td>${rec.class}</td><td>${rec.level==='Exam'?'📝':('Lv.'+rec.level)}</td><td>${displayMode}</td><td>${displayTime}</td><td style="font-weight:bold;">${rec.score}</td><td>${rec.mistakes || 0}</td></tr>`;
                     });
                 }
-           }
-       }
- 
-       function openAdminLogin() {
-document.getElementById('admin-login-modal').style.display = 'flex'; }
-       function closeModal(id) { document.getElementById(id).style.display =
-'none'; }
-       
-       function populateClassFilter() {
-           const records =
-window.getAllRecords(); 
-           const classes = [...new Set(records.map(r => r.class))].sort();
-           const select = document.getElementById('filter-class'); 
-           select.innerHTML = '<option value="">所有班別</option>';
-            classes.forEach(c => {
-select.innerHTML += `<option value="${c}">${c}</option>`;
-});
-       }
- 
-       function renderAdminPanel() {
-           const tbody = document.getElementById('admin-lb-body'); 
-           tbody.innerHTML = '';
-           let records =
-window.getAllRecords(); 
-           
-           const fClass = document.getElementById('filter-class').value;
-           const fLevel = document.getElementById('filter-level').value;
-           const fDate = document.getElementById('filter-date').value;
-           const fCase = document.getElementById('filter-casemode').value;
-           const fTime = document.getElementById('filter-time').value;
- 
-           // 字母樣子顯示轉換 Map
-           const caseMap = { 'mixed': '大小皆可', 'upper': '僅大寫', 'lower': '僅小寫', 'strict-mixed': '混合打', 'Exam': 'Exam' };
- 
-           records = records.filter(rec => {
-                if (fClass && rec.class
-!== fClass) return false;
-                if (fLevel &&
-String(rec.level) !== String(fLevel)) return false;
-                if (fDate &&
-rec.filterDate !== fDate) return false;
-                if (fCase &&
-rec.caseMode !== fCase) return false; 
-                if (fTime &&
-String(rec.timeMode) !== String(fTime)) return false; 
+            }
+        }
+
+        function openAdminLogin() { document.getElementById('admin-login-modal').style.display = 'flex'; }
+        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+        
+        function populateClassFilter() {
+            const records = window.getAllRecords(); 
+            const classes = [...new Set(records.map(r => r.class))].sort();
+            const select = document.getElementById('filter-class'); 
+            select.innerHTML = '<option value="">所有班別</option>';
+            classes.forEach(c => { select.innerHTML += `<option value="${c}">${c}</option>`; });
+        }
+
+        function renderAdminPanel() {
+            const tbody = document.getElementById('admin-lb-body'); 
+            tbody.innerHTML = '';
+            let records = window.getAllRecords(); 
+            
+            const fClass = document.getElementById('filter-class').value;
+            const fLevel = document.getElementById('filter-level').value;
+            const fDate = document.getElementById('filter-date').value;
+            const fCase = document.getElementById('filter-casemode').value;
+            const fTime = document.getElementById('filter-time').value;
+
+            // 字母樣子顯示轉換 Map
+            const caseMap = { 'mixed': '大小皆可', 'upper': '僅大寫', 'lower': '僅小寫', 'strict-mixed': '混合打', 'Exam': 'Exam' };
+
+            records = records.filter(rec => {
+                if (fClass && rec.class !== fClass) return false;
+                if (fLevel && String(rec.level) !== String(fLevel)) return false;
+                if (fDate && rec.filterDate !== fDate) return false;
+                if (fCase && rec.caseMode !== fCase) return false; 
+                if (fTime && String(rec.timeMode) !== String(fTime)) return false; 
                 return true;
-           });
- 
-           records.sort((a, b) => (b.score || 0) - (a.score || 0));
- 
-           if(records.length===0) tbody.innerHTML = '<tr><td
-colspan="9">無資料</td></tr>';
-           else {
+            });
+
+            records.sort((a, b) => (b.score || 0) - (a.score || 0));
+
+            if(records.length===0) tbody.innerHTML = '<tr><td colspan="9">無資料</td></tr>';
+            else {
                 records.forEach(rec => {
-                    const displayMode = caseMap[rec.caseMode] ||
-rec.caseMode || '-';
-                    const displayTime =
-rec.timeMode ? rec.timeMode + 's' : '-';
-                    tbody.innerHTML +=
-`<tr><td><input type="checkbox"
-class="del-chk" data-id="${rec.id}"></td><td>${rec.class}</td><td>${rec.name}</td><td>${rec.level}</td><td>${displayMode}</td><td>${displayTime}</td><td>${rec.score}</td><td>${rec.mistakes
-|| 0}</td><td
-style="font-size:12px;">${rec.date}</td></tr>`; 
+                    const displayMode = caseMap[rec.caseMode] || rec.caseMode || '-';
+                    const displayTime = rec.timeMode ? rec.timeMode + 's' : '-';
+                    tbody.innerHTML += `<tr><td><input type="checkbox" class="del-chk" data-id="${rec.id}"></td><td>${rec.class}</td><td>${rec.name}</td><td>${rec.level}</td><td>${displayMode}</td><td>${displayTime}</td><td>${rec.score}</td><td>${rec.mistakes || 0}</td><td style="font-size:12px;">${rec.date}</td></tr>`; 
                 });
-           }
-       }
- 
-       function resetFilters() { 
-           document.getElementById('filter-class').value=""; 
-           document.getElementById('filter-level').value=""; 
-           document.getElementById('filter-date').value=""; 
-           document.getElementById('filter-casemode').value=""; 
-           document.getElementById('filter-time').value="";     
-           renderAdminPanel(); 
-       }
-       function toggleAll(source) {
-document.querySelectorAll('.del-chk').forEach(cb => cb.checked = source.checked);
-}
-       async function deleteSelected() {
-           if(!confirm("確定刪除？")) return;
-           const checks = document.querySelectorAll('.del-chk:checked');
-           const ids = Array.from(checks).map(cb => cb.dataset.id);
-           if(ids.length > 0 && window.deleteScores) { 
-                await window.deleteScores(ids);
-                await
-window.refreshAdminData(); 
+            }
+        }
+
+        function resetFilters() { 
+            document.getElementById('filter-class').value=""; 
+            document.getElementById('filter-level').value=""; 
+            document.getElementById('filter-date').value=""; 
+            document.getElementById('filter-casemode').value=""; 
+            document.getElementById('filter-time').value="";     
+            renderAdminPanel(); 
+        }
+        function toggleAll(source) { document.querySelectorAll('.del-chk').forEach(cb => cb.checked = source.checked); }
+        async function deleteSelected() {
+            if(!confirm("確定刪除？")) return;
+            const checks = document.querySelectorAll('.del-chk:checked');
+            const ids = Array.from(checks).map(cb => cb.dataset.id);
+            if(ids.length > 0 && window.deleteScores) { 
+                await window.deleteScores(ids); 
+                await window.refreshAdminData(); 
                 renderAdminPanel(); 
-           }
-       }
-       async function clearAllData() { 
-           if(confirm("確定清空？") && window.clearAllScores) { 
+            }
+        }
+        async function clearAllData() { 
+            if(confirm("確定清空？") && window.clearAllScores) { 
                 await window.clearAllScores(); 
-                await
-window.refreshAdminData(); 
+                await window.refreshAdminData(); 
                 renderAdminPanel(); 
-           } 
-       }
-       function exportToExcel() {
-           let records = window.getAllRecords(); 
-           const fClass = document.getElementById('filter-class').value;
-           const fLevel = document.getElementById('filter-level').value;
-           const fDate = document.getElementById('filter-date').value;
-           const fCase = document.getElementById('filter-casemode').value;
-           const fTime = document.getElementById('filter-time').value;
- 
-           records = records.filter(rec => {
-                if (fClass && rec.class
-!== fClass) return false;
-                if (fLevel &&
-String(rec.level) !== String(fLevel)) return false;
-                if (fDate &&
-rec.filterDate !== fDate) return false;
-                if (fCase &&
-rec.caseMode !== fCase) return false;
-                if (fTime &&
-String(rec.timeMode) !== String(fTime)) return false;
+            } 
+        }
+        function exportToExcel() {
+            let records = window.getAllRecords(); 
+            const fClass = document.getElementById('filter-class').value;
+            const fLevel = document.getElementById('filter-level').value;
+            const fDate = document.getElementById('filter-date').value;
+            const fCase = document.getElementById('filter-casemode').value;
+            const fTime = document.getElementById('filter-time').value;
+
+            records = records.filter(rec => {
+                if (fClass && rec.class !== fClass) return false;
+                if (fLevel && String(rec.level) !== String(fLevel)) return false;
+                if (fDate && rec.filterDate !== fDate) return false;
+                if (fCase && rec.caseMode !== fCase) return false;
+                if (fTime && String(rec.timeMode) !== String(fTime)) return false;
                 return true;
-           });
- 
-           if(records.length===0) return alert("無資料");
-           let csv = "\uFEFF班別,姓名,級別,模式,時間(秒),分數,錯字,日期\n"; 
-           records.forEach(r => {
+            });
+
+            if(records.length===0) return alert("無資料");
+            let csv = "\uFEFF班別,姓名,級別,模式,時間(秒),分數,錯字,日期\n"; 
+            records.forEach(r => {
                 const mode = r.caseMode || '-';
                 const time = r.timeMode || '-';
-                csv +=
-`${r.class},${r.name},${r.level},${mode},${time},${r.score},${r.mistakes||0},${r.date}\n`;
-           });
-           const link = document.createElement("a"); 
-           link.href = URL.createObjectURL(new Blob([csv],
-{type:'text/csv;charset=utf-8;'}));
-           link.download = "成績.csv"; link.click();
-       }
- 
-       function loadExamPreset() {
-            const lvl =
-document.getElementById('admin-exam-preset').value; 
-           const contentWrapper = document.getElementById('admin-content-wrapper');
-           const caseWrapper = document.getElementById('admin-casemode-wrapper');
-           
-           if (lvl === 'custom') {
-                contentWrapper.style.display =
-'block'; 
-                caseWrapper.style.display =
-'none'; 
-           } else {
-                contentWrapper.style.display =
-'none'; 
-                caseWrapper.style.display =
-'flex'; 
-           }
-       }
- 
-       function saveExamSettings() {
-           const config = {
-                isActive:
-document.getElementById('admin-exam-active').checked,
-                content:
-document.getElementById('admin-exam-content').value,
-                time:
-document.getElementById('admin-exam-time').value,
-                noHints:
-document.getElementById('admin-exam-nohints').checked,
-                noKeyboard:
-document.getElementById('admin-exam-nokeyboard').checked,
-                caseMode:
-document.getElementById('admin-exam-casemode').value,
-                levelMode:
-document.getElementById('admin-exam-preset').value 
-           };
-           if(window.saveExamConfigToFirebase)
-window.saveExamConfigToFirebase(config);
-       }
-       
-       function savePracticeSettings() {
-           const config = {
-                noHints:
-document.getElementById('admin-practice-nohints').checked,
-                noKeyboard:
-document.getElementById('admin-practice-nokeyboard').checked
-           };
-           if(window.savePracticeConfigToFirebase)
-window.savePracticeConfigToFirebase(config);
-       }
- 
-       function switchAdminTab(tab) {
-           document.querySelectorAll('.tab-btn').forEach(b =>
-b.classList.remove('active'));
-           document.querySelectorAll('.tab-content').forEach(c =>
-c.classList.remove('active'));
-           if(tab === 'exam') {
-               document.querySelector('button[onclick="switchAdminTab(\'exam\')"]').classList.add('active');
-               document.getElementById('tab-exam').classList.add('active');
-           } else if (tab === 'practice') {
-               document.querySelector('button[onclick="switchAdminTab(\'practice\')"]').classList.add('active');
-               document.getElementById('tab-practice').classList.add('active');
-           } else {
-               document.querySelector('button[onclick="switchAdminTab(\'score\')"]').classList.add('active');
-               document.getElementById('tab-score').classList.add('active');
-           }
-       }
- 
-       function selectCaseOption(m) { 
-           selectedCaseMode = m; 
-           ['mixed','upper','lower','strict-mixed'].forEach(id=>document.getElementById('opt-'+id).classList.remove('active'));
-           document.getElementById('opt-'+m).classList.add('active'); 
-       }
-       function selectLevel(l) { selectedLevel = l;
-[1,2,3,4].forEach(i=>document.getElementById('lvl-'+i).classList.remove('active'));
-document.getElementById('lvl-'+l).classList.add('active'); }
-       function selectTime(t) { selectedTime = t;
-[30,60,90,120,180,240,300].forEach(i=>document.getElementById('time-'+i).classList.remove('active'));
-document.getElementById('time-'+t).classList.add('active'); }
-       
-       function highlightFinger(char) {
-           const config = window.getExamConfig ? window.getExamConfig() : {};
-           const pConfig = window.getPracticeConfig ? window.getPracticeConfig() :
-{};
-           
+                csv += `${r.class},${r.name},${r.level},${mode},${time},${r.score},${r.mistakes||0},${r.date}\n`;
+            });
+            const link = document.createElement("a"); 
+            link.href = URL.createObjectURL(new Blob([csv], {type:'text/csv;charset=utf-8;'}));
+            link.download = "成績.csv"; link.click();
+        }
+
+        function loadExamPreset() {
+            const lvl = document.getElementById('admin-exam-preset').value; 
+            const contentWrapper = document.getElementById('admin-content-wrapper');
+            const caseWrapper = document.getElementById('admin-casemode-wrapper');
+            
+            if (lvl === 'custom') {
+                contentWrapper.style.display = 'block'; 
+                caseWrapper.style.display = 'none'; 
+            } else {
+                contentWrapper.style.display = 'none'; 
+                caseWrapper.style.display = 'flex'; 
+            }
+        }
+
+        function saveExamSettings() {
+            const config = {
+                isActive: document.getElementById('admin-exam-active').checked,
+                content: document.getElementById('admin-exam-content').value,
+                time: document.getElementById('admin-exam-time').value,
+                noHints: document.getElementById('admin-exam-nohints').checked,
+                noKeyboard: document.getElementById('admin-exam-nokeyboard').checked,
+                caseMode: document.getElementById('admin-exam-casemode').value,
+                levelMode: document.getElementById('admin-exam-preset').value 
+            };
+            if(window.saveExamConfigToFirebase) window.saveExamConfigToFirebase(config);
+        }
+        
+        function savePracticeSettings() {
+            const config = {
+                noHints: document.getElementById('admin-practice-nohints').checked,
+                noKeyboard: document.getElementById('admin-practice-nokeyboard').checked
+            };
+            if(window.savePracticeConfigToFirebase) window.savePracticeConfigToFirebase(config);
+        }
+
+        function switchAdminTab(tab) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            if(tab === 'exam') {
+                document.querySelector('button[onclick="switchAdminTab(\'exam\')"]').classList.add('active');
+                document.getElementById('tab-exam').classList.add('active');
+            } else if (tab === 'practice') {
+                document.querySelector('button[onclick="switchAdminTab(\'practice\')"]').classList.add('active');
+                document.getElementById('tab-practice').classList.add('active');
+            } else {
+                document.querySelector('button[onclick="switchAdminTab(\'score\')"]').classList.add('active');
+                document.getElementById('tab-score').classList.add('active');
+            }
+        }
+
+        function selectCaseOption(m) { 
+            selectedCaseMode = m; 
+            ['mixed','upper','lower','strict-mixed'].forEach(id=>document.getElementById('opt-'+id).classList.remove('active')); 
+            document.getElementById('opt-'+m).classList.add('active'); 
+        }
+        function selectLevel(l) { selectedLevel = l; [1,2,3,4].forEach(i=>document.getElementById('lvl-'+i).classList.remove('active')); document.getElementById('lvl-'+l).classList.add('active'); }
+        function selectTime(t) { selectedTime = t; [30,60,90,120].forEach(i=>document.getElementById('time-'+i).classList.remove('active')); document.getElementById('time-'+t).classList.add('active'); }
+        
+        function highlightFinger(char) {
+            const config = window.getExamConfig ? window.getExamConfig() : {};
+            const pConfig = window.getPracticeConfig ? window.getPracticeConfig() : {};
+            
             let hideHints = false;
-           if (isExamMode) { if (config.noHints) hideHints = true; } 
-           else { if (pConfig.noHints) hideHints = true; }
-           
-           if (hideHints) return;
-           
-           let fid = null; for(const [id, keys] of Object.entries(fingerMapping)) {
-if(keys.includes(char)) { fid=id; break; } }
-           if(fid) document.getElementById(fid).classList.add('active');
-       }
-       function updateScore() { document.getElementById('score').innerText =
-score; }
-       window.addEventListener('resize', () => { if(isGameRunning)
-highlightInterface(); });
-       document.addEventListener('click', (e) => checkCapsLockState(e));
-       document.addEventListener('keyup', (e) => checkCapsLockState(e));
-       
-       document.addEventListener('keydown', (e) => {
-           checkCapsLockState(e);
-           if (!isGameRunning) return;
-           if (e.ctrlKey || e.altKey || e.metaKey) return;
-           if (e.key === 'Shift' || e.key === 'CapsLock') { highlightInterface();
-return; }
-           
-           const input = e.key;
-           let isCorrect = false;
-           
-           if (isExamMode && !isRandomExam) {
-                if (input === currentTarget)
-isCorrect = true;
-           } else {
-                if (selectedCaseMode ===
-'mixed') { 
-                    if (input.toLowerCase() ===
-currentTarget.toLowerCase()) isCorrect = true; 
-                } else if (selectedCaseMode ===
-'strict-mixed') {
-                    if (input === currentTarget)
-isCorrect = true;
+            if (isExamMode) { if (config.noHints) hideHints = true; } 
+            else { if (pConfig.noHints) hideHints = true; }
+            
+            if (hideHints) return;
+            
+            let fid = null; for(const [id, keys] of Object.entries(fingerMapping)) { if(keys.includes(char)) { fid=id; break; } }
+            if(fid) document.getElementById(fid).classList.add('active');
+        }
+        function updateScore() { document.getElementById('score').innerText = score; }
+        window.addEventListener('resize', () => { if(isGameRunning) highlightInterface(); });
+        document.addEventListener('click', (e) => checkCapsLockState(e));
+        document.addEventListener('keyup', (e) => checkCapsLockState(e));
+        
+        document.addEventListener('keydown', (e) => {
+            checkCapsLockState(e);
+            if (!isGameRunning) return;
+            if (e.ctrlKey || e.altKey || e.metaKey) return;
+            if (e.key === 'Shift' || e.key === 'CapsLock') { highlightInterface(); return; }
+            
+            const input = e.key;
+            let isCorrect = false;
+            
+            if (isExamMode && !isRandomExam) {
+                if (input === currentTarget) isCorrect = true;
+            } else {
+                if (selectedCaseMode === 'mixed') { 
+                    if (input.toLowerCase() === currentTarget.toLowerCase()) isCorrect = true; 
+                } else if (selectedCaseMode === 'strict-mixed') {
+                    if (input === currentTarget) isCorrect = true;
                 } else { 
-                    if (input ===
-currentTarget) isCorrect = true; 
+                    if (input === currentTarget) isCorrect = true; 
                 }
-           }
- 
-           if(isCorrect) {
-               playSuccessSound(); score+=10;
-updateScore();
-               const bounceEl =
-(isExamMode && !isRandomExam) ? document.querySelector('.char-current')
-: document.getElementById('target-char');
-                if(bounceEl)
-bounceEl.style.color = '#32cd32'; 
+            }
+
+            if(isCorrect) {
+                playSuccessSound(); score+=10; updateScore();
+                const bounceEl = (isExamMode && !isRandomExam) ? document.querySelector('.char-current') : document.getElementById('target-char');
+                if(bounceEl) bounceEl.style.color = '#32cd32'; 
                 
-                if (isExamMode &&
-!isRandomExam) { 
-                    examCharIndex++;
-nextChar(); 
+                if (isExamMode && !isRandomExam) { 
+                    examCharIndex++; nextChar(); 
                 } else { 
-                   document.getElementById('target-char').classList.add('bounce');
-setTimeout(nextChar, 200); 
+                    document.getElementById('target-char').classList.add('bounce'); setTimeout(nextChar, 200); 
                 }
-           } else {
-               mistakeCount++;
-               const shakeEl = (isExamMode
-&& !isRandomExam) ? document.querySelector('.target-display') :
-document.getElementById('target-char');
-               shakeEl.classList.remove('shake'); void shakeEl.offsetWidth;
-shakeEl.classList.add('shake');
-           }
-       });
- 
-       function checkCapsLockState(e) { if(e && typeof
-e.getModifierState==='function') isCapsLockOn =
-e.getModifierState("CapsLock"); const k=document.getElementById('key-capslock');
-if(isCapsLockOn){k.classList.add('on');document.getElementById('status-msg').innerText="Caps
-Lock 開啟中";}else{k.classList.remove('on');document.getElementById('status-msg').innerText="";}
-if(isGameRunning) highlightInterface(); }
-       const audioCtx = new (window.AudioContext ||
-window.webkitAudioContext)();
-       function playSuccessSound() { if(audioCtx.state==='suspended')
-audioCtx.resume(); const o=audioCtx.createOscillator();const
-g=audioCtx.createGain();o.frequency.setValueAtTime(500,audioCtx.currentTime);o.frequency.exponentialRampToValueAtTime(1000,audioCtx.currentTime+0.1);g.gain.setValueAtTime(0.1,audioCtx.currentTime);g.gain.exponentialRampToValueAtTime(0.01,audioCtx.currentTime+0.1);o.connect(g);g.connect(audioCtx.destination);o.start();o.stop(audioCtx.currentTime+0.1);
-}
-   </script>
+            } else {
+                mistakeCount++;
+                const shakeEl = (isExamMode && !isRandomExam) ? document.querySelector('.target-display') : document.getElementById('target-char');
+                shakeEl.classList.remove('shake'); void shakeEl.offsetWidth; shakeEl.classList.add('shake');
+            }
+        });
+
+        function checkCapsLockState(e) { if(e && typeof e.getModifierState==='function') isCapsLockOn = e.getModifierState("CapsLock"); const k=document.getElementById('key-capslock'); if(isCapsLockOn){k.classList.add('on');document.getElementById('status-msg').innerText="Caps Lock 開啟中";}else{k.classList.remove('on');document.getElementById('status-msg').innerText="";} if(isGameRunning) highlightInterface(); }
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function playSuccessSound() { if(audioCtx.state==='suspended') audioCtx.resume(); const o=audioCtx.createOscillator();const g=audioCtx.createGain();o.frequency.setValueAtTime(500,audioCtx.currentTime);o.frequency.exponentialRampToValueAtTime(1000,audioCtx.currentTime+0.1);g.gain.setValueAtTime(0.1,audioCtx.currentTime);g.gain.exponentialRampToValueAtTime(0.01,audioCtx.currentTime+0.1);o.connect(g);g.connect(audioCtx.destination);o.start();o.stop(audioCtx.currentTime+0.1); }
+    </script>
 </body>
 </html>
